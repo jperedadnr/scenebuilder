@@ -21,16 +21,28 @@ shadowJar {
     baseName = 'scenebuilder'
     manifest {
         attributes 'Main-Class': mainClassName
+
+        exclude 'module-info.class'
     }
 }
 
-task run (dependsOn: assemble, overwrite: true) {
+run {
+    doFirst {
+        jvmArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'javafx.fxml,javafx.swing,javafx.web',
+                '--add-opens', 'javafx.fxml/javafx.fxml=ALL-UNNAMED'
+        ]
+    }
+}
+
+/* task run (dependsOn: assemble, overwrite: true) {
     doLast {
         String jarPath = relativePath(new File(libsDir, shadowJar.baseName + "-" + version + "-all.jar"))
         javaexec
                 { main = '-jar'; args jarPath }
     }
-}
+} */
 
 processResources {
     def buildDate = new Date().format(buildDateFormat)

@@ -9,11 +9,21 @@ ext.getStringProperty = { name, defaultValue ->
     return propertyValue != null ? propertyValue.toString().trim() : defaultValue
 }
 
+def currentOS = org.gradle.internal.os.OperatingSystem.current()
+def classifier
+if (currentOS.isWindows()) {
+    classifier = 'win'
+} else if (currentOS.isLinux()) {
+    classifier = 'linux'
+} else if (currentOS.isMacOsX()) {
+    classifier = 'mac'
+}
+
 subprojects {
     apply plugin: 'java'
 
     group = 'com.gluonhq.scenebuilder'
-    version = getStringProperty('VERSION', '9.0.0-SNAPSHOT')
+    version = getStringProperty('VERSION', '11.0.0-SNAPSHOT')
 
     ext.buildDateFormat = version.endsWith('-SNAPSHOT') ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
 
@@ -33,6 +43,15 @@ subprojects {
     }
 
     dependencies {
+        //JavaFX
+        compile "org.openjfx:javafx-base:11:$classifier"
+        compile "org.openjfx:javafx-controls:11:$classifier"
+        compile "org.openjfx:javafx-fxml:11:$classifier"
+        compile "org.openjfx:javafx-graphics:11:$classifier"
+        compile "org.openjfx:javafx-media:11:$classifier"
+        compile "org.openjfx:javafx-swing:11:$classifier"
+        compile "org.openjfx:javafx-web:11:$classifier"
+
         // maven dependencies
         compile 'org.eclipse.aether:aether-api:1.1.0'
         compile 'org.eclipse.aether:aether-impl:1.1.0'
@@ -51,6 +70,16 @@ subprojects {
         testCompile 'org.junit.jupiter:junit-jupiter-api:5.3.1'
         testCompile 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
         testCompile 'org.assertj:assertj-core:3.2.0'
+    }
+
+    compileJava {
+        doFirst {
+            options.compilerArgs = [
+                    '--module-path', classpath.asPath,
+                    '--add-modules', 'javafx.fxml,javafx.swing,javafx.web'
+            ]
+            classpath = sourceSets.main.compileClasspath
+        }
     }
 
     test {
