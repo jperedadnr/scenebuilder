@@ -51,6 +51,15 @@ subprojects {
         testCompile 'junit:junit:4.12'
         testCompile 'org.assertj:assertj-core:3.2.0'
     }
+
+    test {
+        // -PexcludeTests="Test1,Test2"
+        if (project.hasProperty('excludeTests')) {
+            project.properties['excludeTests']?.replaceAll(' ', '')?.split('[,;]')?.each {
+                exclude "**/${it}.class"
+            }
+        }
+    }
 }
 
 clean {
