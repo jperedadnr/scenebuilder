@@ -26,7 +26,7 @@ shadowJar {
     }
 }
 
-run {
+/* run {
     doFirst {
         jvmArgs = [
                 '--module-path', classpath.asPath,
@@ -34,15 +34,25 @@ run {
                 '--add-opens', 'javafx.fxml/javafx.fxml=ALL-UNNAMED'
         ]
     }
-}
-
-/* task run (dependsOn: assemble, overwrite: true) {
-    doLast {
-        String jarPath = relativePath(new File(libsDir, shadowJar.baseName + "-" + version + "-all.jar"))
-        javaexec
-                { main = '-jar'; args jarPath }
-    }
 } */
+
+ task run (dependsOn: assemble, overwrite: true) {
+     if (! project.hasProperty('javafx_sdk_path')) {
+         throw new GradleException('You need to set javafx_sdk_path with your local JavaFX SDK path')
+     }
+     doLast {
+         String jarPath = relativePath(new File(libsDir, shadowJar.baseName + "-" + version + "-all.jar"))
+         javaexec
+                { main = '-jar';
+                    args=[
+                            '--module-path',
+                            javafx_sdk_path,
+                            '--add-modules=javafx.fxml,javafx.swing,javafx.web,java.logging,java.scripting',
+                            '--add-opens=javafx.fxml/javafx.fxml=ALL-UNNAMED',
+                            jarPath
+                    ] }
+    }
+}
 
 processResources {
     def buildDate = new Date().format(buildDateFormat)
