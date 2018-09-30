@@ -31,10 +31,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -48,8 +44,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.oracle.javafx.scenebuilder.kit.fxom.glue.GlueCharacters;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javafx.embed.swing.JFXPanel;
 
@@ -61,7 +58,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
     private static FXOMDocument fxomDocument;
     private static FXOMSaver serviceUnderTest;
 
-    @BeforeClass
+    @BeforeAll
     public static void initialize() {
         new JFXPanel();
     }
@@ -70,7 +67,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
     public void testEmptyFXML() throws IOException {
         setupTestCase(FxmlTestInfo.EMPTY);
 
-        assertTrue("fxml is empty", fxomDocument.getFxmlText().isEmpty());
+        Assertions.assertTrue(fxomDocument.getFxmlText().isEmpty(), "fxml is empty");
     }
 
     @Test
@@ -87,7 +84,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
         givenImports.add("javafx.scene.control.ComboBox");
         givenImports.add("javafx.scene.control.TextField");
         givenImports.add("javafx.scene.layout.AnchorPane");
-        assertTrue(imports.containsAll(givenImports));
+        Assertions.assertTrue(imports.containsAll(givenImports));
 
     }
 
@@ -105,7 +102,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
         unusedImports.add("java.math.*");
         unusedImports.add("java.util.Set");
         unusedImports.add("org.junit.Test");
-        assertFalse("unused imports are not present", imports.containsAll(unusedImports));
+        Assertions.assertFalse(imports.containsAll(unusedImports), "unused imports are not present");
     }
 
     @Test
@@ -117,7 +114,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
             imports.add(dc.getName());
         });
 
-        assertFalse("fxml import does not contain javafx.scene.*", imports.contains("javafx.scene.*"));
+        Assertions.assertFalse(imports.contains("javafx.scene.*"), "fxml import does not contain javafx.scene.*");
 
     }
 
@@ -131,8 +128,8 @@ public class FXOMSaverUpdateImportInstructionsTest {
             imports.add(dc.getName());
         });
 
-        assertFalse("fxml import does not contain javafx.scene.*", imports.contains("javafx.scene.*"));
-        assertFalse("fxml import does not contain javafx.scene.control.*", imports.contains("javafx.scene.control.*"));
+        Assertions.assertFalse(imports.contains("javafx.scene.*"), "fxml import does not contain javafx.scene.*");
+        Assertions.assertFalse(imports.contains("javafx.scene.control.*"), "fxml import does not contain javafx.scene.control.*");
     }
 
     @Test
@@ -144,8 +141,8 @@ public class FXOMSaverUpdateImportInstructionsTest {
             imports.add(dc.getName());
         });
 
-        assertTrue("fxml import contains java.lang.String", imports.contains("java.lang.String"));
-        assertTrue("fxml import contains javafx.scene.paint.Color", imports.contains("javafx.scene.paint.Color"));
+        Assertions.assertTrue(imports.contains("java.lang.String"), "fxml import contains java.lang.String");
+        Assertions.assertTrue(imports.contains("javafx.scene.paint.Color"), "fxml import contains javafx.scene.paint.Color");
     }
 
     @Test
@@ -158,7 +155,7 @@ public class FXOMSaverUpdateImportInstructionsTest {
         });
 
         // java.lang.* is not a declared class, therefore not in the imports Set
-        assertTrue("fxml contain only 4 imports", (imports.size() == 4));
+        Assertions.assertTrue((imports.size() == 4), "fxml contain only 4 imports");
     }
 
     @Test
@@ -172,9 +169,9 @@ public class FXOMSaverUpdateImportInstructionsTest {
 
         // java.lang.* is not a declared class, therefore not in the imports Set
         imports.forEach(i -> {
-            assertFalse("fxml does not contain .*", i.contains(".*"));
+            Assertions.assertFalse(i.contains(".*"), "fxml does not contain .*");
         });
-        assertTrue("fxml contains only 4 imports", (imports.size() == 4));
+        Assertions.assertTrue((imports.size() == 4), "fxml contains only 4 imports");
 
     }
 
@@ -187,14 +184,14 @@ public class FXOMSaverUpdateImportInstructionsTest {
             imports.add(dc.getName());
         });
 
-        assertTrue("fxml has import com.oracle.javafx.scenebuilder.kit.fxom.TestCustomButton",
-                imports.contains("com.oracle.javafx.scenebuilder.kit.fxom.TestCustomButton"));
-        assertFalse("fxml does not contain com.oracle.javafx.scenebuilder.*",
-                imports.contains("com.oracle.javafx.scenebuilder.*"));
+        Assertions.assertTrue(imports.contains("com.oracle.javafx.scenebuilder.kit.fxom.TestCustomButton"),
+                "fxml has import com.oracle.javafx.scenebuilder.kit.fxom.TestCustomButton");
+        Assertions.assertFalse(imports.contains("com.oracle.javafx.scenebuilder.*"),
+                "fxml does not contain com.oracle.javafx.scenebuilder.*");
 
         // java.lang.* is not a declared class, therefore not in the imports Set
         imports.forEach(i -> {
-            assertFalse("fxml does not contain .*", i.contains(".*"));
+            Assertions.assertFalse(i.contains(".*"), "fxml does not contain .*");
         });
 
     }
@@ -208,15 +205,13 @@ public class FXOMSaverUpdateImportInstructionsTest {
             imports.add(dc.getName());
         });
 
-        assertEquals("comment line should not be removed", 5, fxomDocument.getGlue().getHeader().size());
+        Assertions.assertEquals(5, fxomDocument.getGlue().getHeader().size(), "comment line should not be removed");
 
-        assertTrue("second glue node should be a comment", fxomDocument.getGlue().getHeader().get(1) instanceof GlueCharacters);
-        assertTrue("fifth glue node should be a comment", fxomDocument.getGlue().getHeader().get(4) instanceof GlueCharacters);
+        Assertions.assertTrue(fxomDocument.getGlue().getHeader().get(1) instanceof GlueCharacters, "second glue node should be a comment");
+        Assertions.assertTrue(fxomDocument.getGlue().getHeader().get(4) instanceof GlueCharacters, "fifth glue node should be a comment");
 
-        assertTrue("fxml does not contain javafx.scene.control.ComboBox",
-                imports.contains("javafx.scene.control.ComboBox"));
-        assertTrue("fxml does not contain javafx.scene.layout.AnchorPane",
-                imports.contains("javafx.scene.layout.AnchorPane"));
+        Assertions.assertTrue(imports.contains("javafx.scene.control.ComboBox"), "fxml does not contain javafx.scene.control.ComboBox");
+        Assertions.assertTrue(imports.contains("javafx.scene.layout.AnchorPane"), "fxml does not contain javafx.scene.layout.AnchorPane");
 
     }
 
@@ -227,11 +222,11 @@ public class FXOMSaverUpdateImportInstructionsTest {
         ArrayList<String> imports = new ArrayList<>();
         fxomDocument.getGlue().collectInstructions("import").forEach(i -> imports.add(i.getData()));
 
-        assertEquals("imports length should be 5", 5, imports.size());
-        assertTrue("HBox import was not found", imports.contains("javafx.scene.layout.HBox"));
-        assertTrue("VBox import was not found", imports.contains("javafx.scene.layout.VBox"));
+        Assertions.assertEquals(5, imports.size(), "imports length should be 5");
+        Assertions.assertTrue(imports.contains("javafx.scene.layout.HBox"), "HBox import was not found");
+        Assertions.assertTrue(imports.contains("javafx.scene.layout.VBox"), "VBox import was not found");
 
-        assertFalse("Wildcard imports are present", imports.contains("java.scene.layout.*") || imports.contains("java.scene.control.*"));
+        Assertions.assertFalse(imports.contains("java.scene.layout.*") || imports.contains("java.scene.control.*"), "Wildcard imports are present");
     }
 
     @Test
@@ -241,11 +236,11 @@ public class FXOMSaverUpdateImportInstructionsTest {
         ArrayList<String> imports = new ArrayList<>();
         fxomDocument.getGlue().collectInstructions("import").forEach(i -> imports.add(i.getData()));
 
-        assertEquals("imports length should be 4", 4, imports.size());
-        assertTrue("Lighting import was not found.", imports.contains("javafx.scene.effect.Lighting"));
-        assertTrue("Light.Distant import was not found.", imports.contains("javafx.scene.effect.Light.Distant"));
+        Assertions.assertEquals(4, imports.size(), "imports length should be 4");
+        Assertions.assertTrue(imports.contains("javafx.scene.effect.Lighting"), "Lighting import was not found.");
+        Assertions.assertTrue(imports.contains("javafx.scene.effect.Light.Distant"), "Light.Distant import was not found.");
 
-        assertFalse("Wildcard imports are present", imports.contains("java.scene.layout.*"));
+        Assertions.assertFalse(imports.contains("java.scene.layout.*"), "Wildcard imports are present");
     }
 
     private String callService() {

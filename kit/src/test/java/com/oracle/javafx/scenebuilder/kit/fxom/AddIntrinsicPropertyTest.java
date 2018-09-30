@@ -32,8 +32,8 @@
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,7 +50,7 @@ public class AddIntrinsicPropertyTest {
     private static PropertyName charsetPropertyName;
     private static PropertyName sourcePropertyName;
 
-    @BeforeClass
+    @BeforeAll
     public static void initialize() {
         prepareTestData();
     }

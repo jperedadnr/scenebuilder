@@ -31,8 +31,8 @@
  */
 package com.oracle.javafx.scenebuilder.kit.util.eventnames;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -41,7 +41,7 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class FindEventNamesUtilTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void initialize() {
         FindEventNamesUtil.initializeEventsMap();
     }

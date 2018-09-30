@@ -36,9 +36,9 @@ import java.io.IOException;
 import java.net.URL;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import static org.junit.Assert.assertFalse;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for {@link com.oracle.javafx.scenebuilder.kit.util.Deprecation#setStaticLoad(javafx.fxml.FXMLLoader, boolean) }
@@ -46,15 +46,8 @@ import org.junit.Test;
 public class StaticLoadTest {
     
     private boolean thrown;
-    
-    public static class DummyApp extends Application {
-        @Override
-        public void start(Stage primaryStage) throws Exception {
-            // noop
-        }
-    }
 
-    @BeforeClass
+    @BeforeAll
     public static void initJFX() {
         Thread t = new Thread("JavaFX Init Thread") {
             @Override
@@ -78,7 +71,7 @@ public class StaticLoadTest {
            thrown = true;
         }
 
-        assertFalse(thrown);
+        Assertions.assertFalse(thrown);
     } 
     
     @Test
@@ -93,6 +86,6 @@ public class StaticLoadTest {
            thrown = true;
         }
 
-        assertFalse(thrown);
+        Assertions.assertFalse(thrown);
     } 
 }

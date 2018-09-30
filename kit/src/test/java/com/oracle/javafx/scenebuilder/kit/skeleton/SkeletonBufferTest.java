@@ -33,12 +33,11 @@ package com.oracle.javafx.scenebuilder.kit.skeleton;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URL;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test for {@link SkeletonBuffer#toString()}.
@@ -56,7 +55,7 @@ public class SkeletonBufferTest {
         String skeleton = skeletonBuffer.toString();
 
         String firstLine = skeleton.substring(0, skeleton.indexOf("\n"));
-        assertEquals("", firstLine);
+        Assertions.assertEquals("", firstLine);
     }
 
     @Test
@@ -70,7 +69,7 @@ public class SkeletonBufferTest {
         String skeleton = skeletonBuffer.toString();
 
         String firstLine = skeleton.substring(0, skeleton.indexOf("\n"));
-        assertEquals("package com;", firstLine);
+        Assertions.assertEquals("package com;", firstLine);
     }
 
     @Test
@@ -84,6 +83,6 @@ public class SkeletonBufferTest {
         String skeleton = skeletonBuffer.toString();
 
         String firstLine = skeleton.substring(0, skeleton.indexOf("\n"));
-        assertEquals("package com.example.app.view;", firstLine);
+        Assertions.assertEquals("package com.example.app.view;", firstLine);
     }
 }
