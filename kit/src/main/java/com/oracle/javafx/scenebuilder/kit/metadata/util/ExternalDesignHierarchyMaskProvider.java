@@ -41,4 +41,14 @@ public interface ExternalDesignHierarchyMaskProvider {
      * @return a List of classes
      */
     List<Class<?>> getResizableItems();
+
+    void setDesignHierarchyMask(DesignHierarchyMask designHierarchyMask);
+
+    boolean isAcceptingAccessory(Object sceneGraphObject, Accessible accessory);
+
+    Class<?> getClassForAccessory(Accessible accessory);
+
+    interface Accessible {
+
+    }
 }

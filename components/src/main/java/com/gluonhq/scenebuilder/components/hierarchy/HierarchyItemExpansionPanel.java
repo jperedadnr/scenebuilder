@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -30,8 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy;
+package com.gluonhq.scenebuilder.components.hierarchy;
 
+import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyItem;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
@@ -125,7 +126,7 @@ public class HierarchyItemExpansionPanel extends HierarchyItem {
 
     @Override
     public Image getPlaceHolderImage() {
-        return ImageUtils.getNodeIcon("Gluon_ExpansionPanel-" + accessory.name().toLowerCase(Locale.ROOT) + ".png");
+        return ImageUtils.getNodeIcon("ExpansionPanel-" + accessory.name().toLowerCase(Locale.ROOT) + ".png");
     }
 
     @Override

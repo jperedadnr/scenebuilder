@@ -46,7 +46,6 @@ import com.oracle.javafx.scenebuilder.kit.editor.util.ContextMenuController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -57,6 +56,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -649,39 +650,6 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
         return treeItem;
     }
 
-    private TreeItem<HierarchyItem> makeTreeItemExpansionPanel(
-            final DesignHierarchyMask owner,
-            final FXOMObject fxomObject,
-            final Accessory accessory) {
-        final HierarchyItemExpansionPanel item = new HierarchyItemExpansionPanel(owner, fxomObject, accessory);
-        final TreeItem<HierarchyItem> treeItem = new TreeItem<>(item);
-        // Set back the TreeItem expanded property if any
-        Boolean expanded = treeItemsExpandedMapProperty.get(fxomObject);
-        if (expanded != null) {
-            treeItem.setExpanded(expanded);
-        }
-        // Mask may be null for empty place holder
-        if (item.getMask() != null) {
-            updateTreeItem(treeItem);
-        }
-        return treeItem;
-    }
-
-    private TreeItem<HierarchyItem> makeTreeItemExpandedPanel(final DesignHierarchyMask owner, final FXOMObject fxomObject) {
-        final HierarchyItemExpandedPanel item = new HierarchyItemExpandedPanel(owner, fxomObject);
-        final TreeItem<HierarchyItem> treeItem = new TreeItem<>(item);
-        // Set back the TreeItem expanded property if any
-        Boolean expanded = treeItemsExpandedMapProperty.get(fxomObject);
-        if (expanded != null) {
-            treeItem.setExpanded(expanded);
-        }
-        // Mask may be null for empty place holder
-        if (item.getMask() != null) {
-            updateTreeItem(treeItem);
-        }
-        return treeItem;
-    }
-
     private TreeItem<HierarchyItem> makeTreeItemBorderPane(
             final DesignHierarchyMask owner,
             final FXOMObject fxomObject,
@@ -848,8 +816,8 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
 
         // Context menu (displayed at third position)
         //---------------------------------
-        if (mask.isAcceptingAccessory(Accessory.CONTEXT_MENU)) {
-            final FXOMObject value = mask.getAccessory(Accessory.CONTEXT_MENU);
+        if (mask.isAcceptingAccessory(DefaultAccessories.byName("CONTEXT_MENU"))) {
+            final FXOMObject value = mask.getAccessory(DefaultAccessories.byName("CONTEXT_MENU"));
             if (value != null) {
                 treeItem.getChildren().add(makeTreeItem(value));
             }
@@ -857,54 +825,42 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
 
         // Axis (chart)
         //---------------------------------
-        if (mask.isAcceptingAccessory(Accessory.XAXIS)) {
-            final FXOMObject value = mask.getAccessory(Accessory.XAXIS);
+        if (mask.isAcceptingAccessory(DefaultAccessories.byName("XAXIS"))) {
+            final FXOMObject value = mask.getAccessory(DefaultAccessories.byName("XAXIS"));
             if (value != null) {
                 treeItem.getChildren().add(makeTreeItem(value));
             }
         }
-        if (mask.isAcceptingAccessory(Accessory.YAXIS)) {
-            final FXOMObject value = mask.getAccessory(Accessory.YAXIS);
+        if (mask.isAcceptingAccessory(DefaultAccessories.byName("YAXIS"))) {
+            final FXOMObject value = mask.getAccessory(DefaultAccessories.byName("YAXIS"));
             if (value != null) {
                 treeItem.getChildren().add(makeTreeItem(value));
             }
         }
 
-        // Gluon ExpansionPanel
-        for (Accessory accessory: new Accessory[]{
-                Accessory.EXPANDED_CONTENT,
-                Accessory.COLLAPSED_CONTENT
-        }) {
-            if (mask.isAcceptingAccessory(accessory)) {
-                final FXOMObject value = mask.getAccessory(accessory);
-                treeItem.getChildren().add(makeTreeItemExpansionPanel(mask, value, accessory));
-            }
-        }
+        Map<Accessory, FXOMObject> map = mask.checkExternalAccesories();
+        for (Map.Entry<Accessory, FXOMObject> entry : map.entrySet()) {
 
-        // Gluon ExpandedPanel
-        if (mask.isAcceptingAccessory(Accessory.EX_CONTENT)) {
-            final FXOMObject value = mask.getAccessory(Accessory.EX_CONTENT);
-            treeItem.getChildren().add(makeTreeItemExpandedPanel(mask, value));
         }
 
         // Content (ScrollPane, Tab...)
         //---------------------------------
-        if (mask.isAcceptingAccessory(Accessory.CONTENT)) {
-            final FXOMObject value = mask.getAccessory(Accessory.CONTENT);
+        if (mask.isAcceptingAccessory(DefaultAccessories.byName("CONTENT"))) {
+            final FXOMObject value = mask.getAccessory(DefaultAccessories.byName("CONTENT"));
             if (value != null) {
                 treeItem.getChildren().add(makeTreeItem(value));
             }
         }
 
-        if (mask.isAcceptingAccessory(Accessory.ROOT)) {
-            final FXOMObject value = mask.getAccessory(Accessory.ROOT);
+        if (mask.isAcceptingAccessory(DefaultAccessories.byName("ROOT"))) {
+            final FXOMObject value = mask.getAccessory(DefaultAccessories.byName("ROOT"));
             if (value != null) {
                 treeItem.getChildren().add(makeTreeItem(value));
             }
         }
 
-        if (mask.isAcceptingAccessory(Accessory.SCENE)) {
-            final FXOMObject value = mask.getAccessory(Accessory.SCENE);
+        if (mask.isAcceptingAccessory(DefaultAccessories.byName("SCENE"))) {
+            final FXOMObject value = mask.getAccessory(DefaultAccessories.byName("SCENE"));
             if (value != null) {
                 treeItem.getChildren().add(makeTreeItem(value));
             }
@@ -913,11 +869,11 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
         // Positionning
         //---------------------------------
         for (Accessory accessory : new Accessory[]{
-            Accessory.TOP,
-            Accessory.LEFT,
-            Accessory.CENTER,
-            Accessory.RIGHT,
-            Accessory.BOTTOM}) {
+            DefaultAccessories.byName("TOP"),
+            DefaultAccessories.byName("LEFT"),
+            DefaultAccessories.byName("CENTER"),
+            DefaultAccessories.byName("RIGHT"),
+            DefaultAccessories.byName("BOTTOM")}) {
             if (mask.isAcceptingAccessory(accessory)) {
                 final FXOMObject value = mask.getAccessory(accessory);
                 treeItem.getChildren().add(makeTreeItemBorderPane(mask, value, accessory));
@@ -927,10 +883,10 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
         // DialogPane
         //---------------------------------
         for (Accessory accessory : new Accessory[]{
-            Accessory.HEADER,
-            Accessory.DP_GRAPHIC,
-            Accessory.DP_CONTENT,
-            Accessory.EXPANDABLE_CONTENT}) {
+            DefaultAccessories.byName("HEADER"),
+            DefaultAccessories.byName("DP_GRAPHIC"),
+            DefaultAccessories.byName("DP_CONTENT"),
+            DefaultAccessories.byName("EXPANDABLE_CONTENT")}) {
             if (mask.isAcceptingAccessory(accessory)) {
                 final FXOMObject value = mask.getAccessory(accessory);
                 treeItem.getChildren().add(makeTreeItemDialogPane(mask, value, accessory));

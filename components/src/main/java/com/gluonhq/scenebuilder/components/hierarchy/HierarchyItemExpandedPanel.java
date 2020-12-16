@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -30,8 +30,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy;
+package com.gluonhq.scenebuilder.components.hierarchy;
 
+import com.gluonhq.scenebuilder.components.GluonDesignHierarchyMaskProvider;
+import com.gluonhq.scenebuilder.components.GluonDesignHierarchyMaskProvider.AccessoryEx;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyItem;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
@@ -45,6 +48,7 @@ import java.util.Objects;
 public class HierarchyItemExpandedPanel extends HierarchyItem {
 
     private final DesignHierarchyMask.Accessory accessory;
+    private final AccessoryEx accessoryEx = AccessoryEx.EX_CONTENT;
     // The accessory owner. Used for the equals method.
     private final DesignHierarchyMask owner;
 
@@ -61,7 +65,7 @@ public class HierarchyItemExpandedPanel extends HierarchyItem {
         this.owner = owner;
         // fxomObject can be null for place holder items
         this.mask = fxomObject == null ? null : new DesignHierarchyMask(fxomObject);
-        this.accessory = DesignHierarchyMask.Accessory.EX_CONTENT;
+        this.accessory = DesignHierarchyMask.Accessory.EXTERNAL;
     }
 
     @Override

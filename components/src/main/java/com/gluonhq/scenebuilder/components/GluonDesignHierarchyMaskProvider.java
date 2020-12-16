@@ -35,12 +35,41 @@ import com.gluonhq.charm.glisten.control.BottomNavigation;
 import com.gluonhq.charm.glisten.control.DropdownButton;
 import com.gluonhq.charm.glisten.control.ExpansionPanel;
 import com.gluonhq.charm.glisten.control.ToggleButtonGroup;
+import com.gluonhq.scenebuilder.components.hierarchy.HierarchyItemExpandedPanel;
+import com.gluonhq.scenebuilder.components.hierarchy.HierarchyItemExpansionPanel;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyItem;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.ExternalDesignHierarchyMaskProvider;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import javafx.scene.control.TreeItem;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GluonDesignHierarchyMaskProvider implements ExternalDesignHierarchyMaskProvider {
+
+    public enum AccessoryEx implements ExternalDesignHierarchyMaskProvider.Accessible {
+        // ExpansionPanel
+        EXPANDED_CONTENT,
+        COLLAPSED_CONTENT,
+        // ExpandedPanel
+        EX_CONTENT {
+            @Override
+            public String toString() { return "CONTENT"; }
+        }
+    }
+
+    private static final PropertyName contentName = new PropertyName("content");
+    // ExpansionPanel
+    private static final PropertyName expandedContentName = new PropertyName("expandedContent");
+    private static final PropertyName collapsedContentName = new PropertyName("collapsedContent");
+
+    private final Map<FXOMObject, Boolean> treeItemsExpandedMapProperty = new HashMap<>();
+    private DesignHierarchyMask designHierarchyMask;
 
     @Override
     public List<Class<?>> getResizableItems() {
@@ -50,5 +79,133 @@ public class GluonDesignHierarchyMaskProvider implements ExternalDesignHierarchy
                 BottomNavigation.class,
                 ExpansionPanel.CollapsedPanel.class,
                 ToggleButtonGroup.class);
+    }
+
+    @Override
+    public void setDesignHierarchyMask(DesignHierarchyMask designHierarchyMask) {
+        this.designHierarchyMask = designHierarchyMask;
+    }
+
+    @Override
+    public boolean isAcceptingAccessory(Object sceneGraphObject, Accessible accessory) {
+        if (accessory instanceof Accessory) {
+            switch ((Accessory) accessory) {
+                case GRAPHIC:
+                    if (sceneGraphObject instanceof ExpansionPanel.ExpandedPanel) {
+                        return false;
+                    }
+                    break;
+                case DP_GRAPHIC:
+                    if (sceneGraphObject instanceof ExpansionPanel.ExpandedPanel) {
+                        return false;
+                    }
+                    break;
+                case EXPANDABLE_CONTENT:
+                    if (!(sceneGraphObject instanceof ExpansionPanel)) {
+                        return false;
+                    }
+                    break;
+                case EXTERNAL:
+                    switch ((AccessoryEx) accessory) {
+                        case COLLAPSED_CONTENT:
+                            if (!(sceneGraphObject instanceof ExpansionPanel)) {
+                                return false;
+                            }
+                            break;
+                        case EX_CONTENT:
+                            if (!(sceneGraphObject instanceof ExpansionPanel.ExpandedPanel)) {
+                                return false;
+                            }
+                            break;
+                    }
+                    break;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public Class<?> getClassForAccessory(Accessible accessory) {
+        // TODO:
+//        switch (accessoryEx) {
+//            case EX_CONTENT:
+//            case EXPANDED_CONTENT:
+//            case COLLAPSED_CONTENT:
+                return javafx.scene.Node.class;
+//            }
+//        return null;
+    }
+
+    public PropertyName getPropertyNameForAccessory(AccessoryEx accessory) {
+        final PropertyName result;
+
+        switch (accessory) {
+            case EX_CONTENT:
+                result = contentName;
+                break;
+            case EXPANDED_CONTENT:
+                result = expandedContentName;
+                break;
+            case COLLAPSED_CONTENT:
+                result = collapsedContentName;
+                break;
+            }
+        }
+
+     public Map<Accessory, FXOMObject> checkExternalAccesories() {
+        Map<Accessory, FXOMObject> map = new HashMap();
+        // Gluon ExpansionPanel
+        for (AccessoryEx accessory : new AccessoryEx[]{
+                AccessoryEx.EXPANDED_CONTENT,
+                AccessoryEx.COLLAPSED_CONTENT
+        }) {
+            if (isAcceptingAccessory(accessory)) {
+                final FXOMObject value = designHierarchyMask.getAccessory(accessory);
+                map.put(accessory, value);
+//                treeItem.getChildren().add(makeTreeItemExpansionPanel(mask, value, accessory));
+            }
+        }
+
+        // Gluon ExpandedPanel
+        if (mask.isAcceptingAccessory(Accessory.EX_CONTENT)) {
+            final FXOMObject value = designHierarchyMask.getAccessory(AccessoryEx.EX_CONTENT);
+            map.put(AccessoryEx.EX_CONTENT, value);
+//            treeItem.getChildren().add(makeTreeItemExpandedPanel(mask, value));
+        }
+        return map;
+    }
+
+
+    private TreeItem<HierarchyItem> makeTreeItemExpansionPanel(
+            final DesignHierarchyMask owner,
+            final FXOMObject fxomObject,
+            final DesignHierarchyMask.Accessory accessory) {
+        final HierarchyItemExpansionPanel item = new HierarchyItemExpansionPanel(owner, fxomObject, accessory);
+        final TreeItem<HierarchyItem> treeItem = new TreeItem<>(item);
+        // Set back the TreeItem expanded property if any
+        Boolean expanded = treeItemsExpandedMapProperty.get(fxomObject);
+        if (expanded != null) {
+            treeItem.setExpanded(expanded);
+        }
+        // Mask may be null for empty place holder
+        if (item.getMask() != null) {
+            updateTreeItem(treeItem);
+        }
+        return treeItem;
+    }
+
+    private TreeItem<HierarchyItem> makeTreeItemExpandedPanel(final DesignHierarchyMask owner, final FXOMObject fxomObject) {
+        final HierarchyItemExpandedPanel item = new HierarchyItemExpandedPanel(owner, fxomObject);
+        final TreeItem<HierarchyItem> treeItem = new TreeItem<>(item);
+        // Set back the TreeItem expanded property if any
+        Boolean expanded = treeItemsExpandedMapProperty.get(fxomObject);
+        if (expanded != null) {
+            treeItem.setExpanded(expanded);
+        }
+        // Mask may be null for empty place holder
+        if (item.getMask() != null) {
+            updateTreeItem(treeItem);
+        }
+        return treeItem;
     }
 }

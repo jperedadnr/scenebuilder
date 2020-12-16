@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -32,7 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.metadata.util;
 
-import com.gluonhq.charm.glisten.control.ExpansionPanel;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMCollection;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
@@ -44,6 +43,8 @@ import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ComponentPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
 import com.oracle.javafx.scenebuilder.kit.util.Deprecation;
 import java.net.URL;
 import java.util.ArrayList;
@@ -58,7 +59,6 @@ import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -87,78 +87,14 @@ import javafx.stage.Stage;
  */
 public class DesignHierarchyMask {
 
-    public enum Accessory {
-        // True accessories
-
-        PLACEHOLDER,
-        TOOLTIP,
-        CONTEXT_MENU,
-        CLIP,
-        GRAPHIC,
-        // Single-valued sub-components treated as accessories
-        // TODO(elp) : verify that it is complete 
-        CONTENT,
-        ROOT,
-        SCENE,
-        TOP,
-        BOTTOM,
-        LEFT,
-        RIGHT,
-        CENTER,
-        XAXIS,
-        YAXIS,
-        TREE_COLUMN,
-        EXPANDABLE_CONTENT,
-        HEADER,
-        DP_CONTENT {
-                    @Override
-                    public String toString() {
-                        return "CONTENT"; // NOI18N
-                    }
-                },
-        DP_GRAPHIC {
-                    @Override
-                    public String toString() {
-                        return "GRAPHIC"; // NOI18N
-                    }
-                },
-        // ExpansionPanel
-        EXPANDED_CONTENT,
-        COLLAPSED_CONTENT,
-        // ExpandedPanel
-        EX_CONTENT {
-            @Override
-            public String toString() { return "CONTENT"; }
-        }
-    }
-    private static final PropertyName graphicName = new PropertyName("graphic");
-    private static final PropertyName contentName = new PropertyName("content");
-    private static final PropertyName rootName = new PropertyName("root");
-    private static final PropertyName sceneName = new PropertyName("scene");
-    private static final PropertyName expandableContentName = new PropertyName("expandableContent");
-    private static final PropertyName headerName = new PropertyName("header");
-    private static final PropertyName topName = new PropertyName("top");
-    private static final PropertyName bottomName = new PropertyName("bottom");
-    private static final PropertyName leftName = new PropertyName("left");
-    private static final PropertyName rightName = new PropertyName("right");
-    private static final PropertyName centerName = new PropertyName("center");
-    private static final PropertyName xAxisName = new PropertyName("xAxis");
-    private static final PropertyName yAxisName = new PropertyName("yAxis");
-    private static final PropertyName placeholderName = new PropertyName("placeholder");
-    private static final PropertyName tooltipName = new PropertyName("tooltip");
-    private static final PropertyName contextMenuName = new PropertyName("contextMenu");
-    private static final PropertyName clipName = new PropertyName("clip");
-    private static final PropertyName treeColumnName = new PropertyName("treeColumn");
-    // ExpansionPanel
-    private static final PropertyName expandedContentName = new PropertyName("expandedContent");
-    private static final PropertyName collapsedContentName = new PropertyName("collapsedContent");
-
     private final FXOMObject fxomObject;
     private Map<PropertyName, ComponentPropertyMetadata> propertyMetadataMap; // Initialized lazily
+    private final Collection<ExternalDesignHierarchyMaskProvider> providers;
 
     public DesignHierarchyMask(FXOMObject fxomObject) {
         assert fxomObject != null;
         this.fxomObject = fxomObject;
+        this.providers = getExternalDesignHierarchyMaskProviders();
     }
 
     public FXOMObject getFxomObject() {
@@ -234,8 +170,7 @@ public class DesignHierarchyMask {
             }
         } else {
             // Default
-            Class componentClass = sceneGraphObject.getClass();
-            String fileName = componentClass.getSimpleName();
+            String fileName = sceneGraphObject.getClass().getSimpleName();
             url = ImageUtils.getNodeIconURL(fileName + ".png"); //NOI18N
         }
         return url;
@@ -421,33 +356,19 @@ public class DesignHierarchyMask {
         final Class<?> valueClass = getClassForAccessory(accessory);
 
         final Object sceneGraphObject = fxomObject.getSceneGraphObject();
-        switch (accessory) {
-            case CONTENT:
-            case GRAPHIC:
-                if (sceneGraphObject instanceof DialogPane == true || sceneGraphObject  instanceof ExpansionPanel.ExpandedPanel == true) {
-                    return false;
-                }
-                break;
-            case DP_CONTENT:
-            case DP_GRAPHIC:
-                if (sceneGraphObject instanceof DialogPane == false || sceneGraphObject instanceof ExpansionPanel.ExpandedPanel == true) {
-                    return false;
-                }
-                break;
-            case EXPANDABLE_CONTENT:
-            case COLLAPSED_CONTENT:
-                if (sceneGraphObject instanceof ExpansionPanel == false) {
-                    return false;
-                }
-                break;
-            case EX_CONTENT:
-                if (sceneGraphObject instanceof ExpansionPanel.ExpandedPanel == false) {
-                    return false;
-                }
-                break;
-            default:
-                break;
+
+        boolean accepting = DefaultAccessories.isAcceptingAccessory(accessory, sceneGraphObject);
+        if (! accepting) {
+            return false;
         }
+        // TODO
+//            case EXTERNAL:
+//                for (ExternalDesignHierarchyMaskProvider provider : providers) {
+//                    if (! provider.isAcceptingAccessory(sceneGraphObject, accessory)) {
+//                        return false;
+//                    }
+//                }
+//                break;
         return isAcceptingProperty(propertyName, valueClass);
     }
 
@@ -470,54 +391,18 @@ public class DesignHierarchyMask {
                 && accessoryClass.isInstance(sceneGraphObject);
     }
 
-    public static Class<?> getClassForAccessory(Accessory accessory) {
-        final Class<?> result;
-
-        switch (accessory) {
-            case GRAPHIC:
-            case TOP:
-            case BOTTOM:
-            case LEFT:
-            case RIGHT:
-            case CENTER:
-            case PLACEHOLDER:
-            case CLIP:
-            case CONTENT:
-            case ROOT:
-                result = javafx.scene.Node.class;
-                break;
-            case SCENE:
-                result = javafx.scene.Scene.class;
-                break;
-            case XAXIS:
-            case YAXIS:
-                result = javafx.scene.chart.Axis.class;
-                break;
-            case TOOLTIP:
-                result = javafx.scene.control.Tooltip.class;
-                break;
-            case CONTEXT_MENU:
-                result = javafx.scene.control.ContextMenu.class;
-                break;
-            case TREE_COLUMN:
-                result = javafx.scene.control.TreeTableColumn.class;
-                break;
-            case DP_CONTENT:
-            case EX_CONTENT:
-            case EXPANDABLE_CONTENT:
-            case DP_GRAPHIC:
-            case HEADER:
-                result = javafx.scene.Node.class;
-                break;
-            case EXPANDED_CONTENT:
-            case COLLAPSED_CONTENT:
-                result = javafx.scene.Node.class;
-                break;
-            default: // Bug
-                throw new IllegalStateException("Unexpected accessory " + accessory);
+    private Class<?> getClassForAccessory(Accessory accessory) {
+//            case EXTERNAL: // TODO. For now assume only Node class
+//                for (ExternalDesignHierarchyMaskProvider provider : providers) {
+                // this won't work if more than one provider with different classes...
+//                    result = provider.getClassForAccessory(accessory);
+//                    break;
+//                }
+        Class<?> clazz = accessory.getClazz();
+        if (clazz == null) {
+            throw new IllegalStateException("Unexpected accessory " + accessory);
         }
-
-        return result;
+        return clazz;
     }
 
     public FXOMObject getAccessory(Accessory accessory) {
@@ -689,77 +574,12 @@ public class DesignHierarchyMask {
     }
 
     public PropertyName getPropertyNameForAccessory(Accessory accessory) {
-        final PropertyName result;
-
-        switch (accessory) {
-            case GRAPHIC:
-            case DP_GRAPHIC:
-                result = graphicName;
-                break;
-            case CONTENT:
-            case DP_CONTENT:
-            case EX_CONTENT:
-                result = contentName;
-                break;
-            case ROOT:
-                result = rootName;
-                break;
-            case SCENE:
-                result = sceneName;
-                break;
-            case EXPANDABLE_CONTENT:
-                result = expandableContentName;
-                break;
-            case HEADER:
-                result = headerName;
-                break;
-            case TOP:
-                result = topName;
-                break;
-            case BOTTOM:
-                result = bottomName;
-                break;
-            case LEFT:
-                result = leftName;
-                break;
-            case RIGHT:
-                result = rightName;
-                break;
-            case CENTER:
-                result = centerName;
-                break;
-            case XAXIS:
-                result = xAxisName;
-                break;
-            case YAXIS:
-                result = yAxisName;
-                break;
-            case PLACEHOLDER:
-                result = placeholderName;
-                break;
-            case TOOLTIP:
-                result = tooltipName;
-                break;
-            case CONTEXT_MENU:
-                result = contextMenuName;
-                break;
-            case CLIP:
-                result = clipName;
-                break;
-            case TREE_COLUMN:
-                result = treeColumnName;
-                break;
-            case EXPANDED_CONTENT:
-                result = expandedContentName;
-                break;
-            case COLLAPSED_CONTENT:
-                result = collapsedContentName;
-                break;
-            default: // Bug
-                throw new IllegalStateException("Unexpected accessory " + accessory);
+        String propertyName = accessory.getPropertyName();
+        if (propertyName == null) {
+            throw new IllegalStateException("Unexpected accessory " + accessory);
         }
-
-        return result;
+        //case EXTERNAL: // TODO
+        return new PropertyName(propertyName);
     }
 
     /*
@@ -1066,22 +886,44 @@ public class DesignHierarchyMask {
     public boolean needResizeWhenTopElement() {
         Object sceneGraphObject = fxomObject.getSceneGraphObject();
         return (this.isAcceptingSubComponent()
-                || this.isAcceptingAccessory(Accessory.CONTENT)
-                || this.isAcceptingAccessory(Accessory.ROOT)
-                || this.isAcceptingAccessory(Accessory.SCENE)
-                || this.isAcceptingAccessory(Accessory.CENTER)
-                || this.isAcceptingAccessory(Accessory.TOP)
-                || this.isAcceptingAccessory(Accessory.RIGHT)
-                || this.isAcceptingAccessory(Accessory.BOTTOM)
-                || this.isAcceptingAccessory(Accessory.LEFT))
+                || this.isAcceptingAccessory(DefaultAccessories.byName("CONTENT"))
+                || this.isAcceptingAccessory(DefaultAccessories.byName("ROOT"))
+                || this.isAcceptingAccessory(DefaultAccessories.byName("SCENE"))
+                || this.isAcceptingAccessory(DefaultAccessories.byName("CENTER"))
+                || this.isAcceptingAccessory(DefaultAccessories.byName("TOP"))
+                || this.isAcceptingAccessory(DefaultAccessories.byName("RIGHT"))
+                || this.isAcceptingAccessory(DefaultAccessories.byName("BOTTOM"))
+                || this.isAcceptingAccessory(DefaultAccessories.byName("LEFT")))
                 && ! (sceneGraphObject instanceof MenuButton
                         || sceneGraphObject instanceof MenuBar
                         || sceneGraphObject instanceof ToolBar
                         || isExternalResizable(sceneGraphObject));
     }
 
+    public Map<Accessory, FXOMObject> checkExternalAccesories() {
+        Map<Accessory, FXOMObject> map = new HashMap();
+//        // Gluon ExpansionPanel
+//        for (Accessory accessory: new Accessory[]{
+//                Accessory.EXPANDED_CONTENT,
+//                Accessory.COLLAPSED_CONTENT
+//        }) {
+//            if (isAcceptingAccessory(accessory)) {
+//                final FXOMObject value = getAccessory(accessory);
+//                map.put(accessory, value);
+////                treeItem.getChildren().add(makeTreeItemExpansionPanel(mask, value, accessory));
+//            }
+//        }
+//
+//        // Gluon ExpandedPanel
+//        if (mask.isAcceptingAccessory(Accessory.EX_CONTENT)) {
+//            final FXOMObject value = getAccessory(Accessory.EX_CONTENT);
+//            map.put(Accessory.EX_CONTENT, value);
+////            treeItem.getChildren().add(makeTreeItemExpandedPanel(mask, value));
+//        }
+        return map;
+    }
+
     private boolean isExternalResizable(Object object) {
-        Collection<ExternalDesignHierarchyMaskProvider> providers = getExternalDesignHierarchyMaskProviders();
         for (ExternalDesignHierarchyMaskProvider provider : providers) {
             for (Class<?> item : provider.getResizableItems()) {
                 if (item.isInstance(object)) {
@@ -1095,7 +937,10 @@ public class DesignHierarchyMask {
     private Collection<ExternalDesignHierarchyMaskProvider> getExternalDesignHierarchyMaskProviders() {
         ServiceLoader<ExternalDesignHierarchyMaskProvider> loader = ServiceLoader.load(ExternalDesignHierarchyMaskProvider.class);
         Collection<ExternalDesignHierarchyMaskProvider> providers = new ArrayList<>();
-        loader.iterator().forEachRemaining(providers::add);
+        loader.iterator().forEachRemaining(provider -> {
+            provider.setDesignHierarchyMask(this);
+            providers.add(provider);
+        });
         return providers;
     }
 }
