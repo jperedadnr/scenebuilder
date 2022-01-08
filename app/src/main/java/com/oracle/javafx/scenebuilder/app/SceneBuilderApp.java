@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2021, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -119,6 +119,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     private UserLibrary userLibrary;
     private ToolTheme toolTheme = ToolTheme.DEFAULT;
 
+    static {
+        System.setProperty("java.util.logging.config.file", SceneBuilderApp.class.getResource("/logging.properties").getPath());
+    }
 
     /*
      * Public
@@ -939,7 +942,9 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
             }
             try {
                 boolean showUpdateDialog = true;
-                if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
+                if (AppSettings.getSceneBuilderVersion().contains("SNAPSHOT")) {
+                    showUpdateDialog = false;
+                } else if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
                     PreferencesController pc = PreferencesController.getSingleton();
                     PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
 
@@ -982,25 +987,26 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     alert.setContentText(I18N.getString("check_for_updates.alert.error.message"));
                     alert.showAndWait();
                 });
-            }
-            try {
-                if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
-                    String latestVersionText = AppSettings.getLatestVersionText();
-                    String latestVersionAnnouncementURL = AppSettings.getLatestVersionAnnouncementURL();
-                    Platform.runLater(() -> {
-                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, latestVersionText,
-                                latestVersionAnnouncementURL, source.getStage());
-                        dialog.showAndWait();
-                    });
-                } else {
-                    SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION, getFrontDocumentWindow().getStage());
-                    alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
-                    alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
-                    alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
-                    alert.showAndWait();
+            } else {
+                try {
+                    if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
+                        String latestVersionText = AppSettings.getLatestVersionText();
+                        String latestVersionAnnouncementURL = AppSettings.getLatestVersionAnnouncementURL();
+                        Platform.runLater(() -> {
+                            UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, latestVersionText,
+                                    latestVersionAnnouncementURL, source.getStage());
+                            dialog.showAndWait();
+                        });
+                    } else {
+                        SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION, getFrontDocumentWindow().getStage());
+                        alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
+                        alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
+                        alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
+                        alert.showAndWait();
+                    }
+                } catch (NumberFormatException ex) {
+                    Platform.runLater(() -> showVersionNumberFormatError(source));
                 }
-            } catch (NumberFormatException ex) {
-                Platform.runLater(() -> showVersionNumberFormatError(source));
             }
         });
     }
@@ -1011,7 +1017,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         // in development so we don't localize the strings
         alert.setTitle("Error");
         alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
-        alert.setContentText("Version number format not supported. Maybe using SNAPSHOT or RC versions.");
+        alert.setContentText("Update check is disabled in development environment.");
         alert.showAndWait();
     }
 
