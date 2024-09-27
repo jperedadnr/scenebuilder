@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -46,6 +46,8 @@ import com.oracle.javafx.scenebuilder.kit.editor.util.ContextMenuController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -56,8 +58,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.oracle.javafx.scenebuilder.kit.metadata.util.access.Accessory;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -798,8 +798,8 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
 
         // Graphic (displayed at first position)
         //---------------------------------
-        if (mask.isAcceptingAccessory(Accessory.GRAPHIC)) {
-            final FXOMObject value = mask.getAccessory(Accessory.GRAPHIC);
+        if (mask.isAcceptingAccessory(DefaultAccessories.byName("GRAPHIC"))) {
+            final FXOMObject value = mask.getAccessory(DefaultAccessories.byName("GRAPHIC"));
             if (value != null) {
                 treeItem.getChildren().add(makeTreeItemGraphic(mask, value));
             }
@@ -807,8 +807,8 @@ public abstract class AbstractHierarchyPanelController extends AbstractFxmlPanel
 
         // Tooltip (displayed at second position)
         //---------------------------------
-        if (mask.isAcceptingAccessory(Accessory.TOOLTIP)) {
-            final FXOMObject value = mask.getAccessory(Accessory.TOOLTIP);
+        if (mask.isAcceptingAccessory(DefaultAccessories.byName("TOOLTIP"))) {
+            final FXOMObject value = mask.getAccessory(DefaultAccessories.byName("TOOLTIP"));
             if (value != null) {
                 treeItem.getChildren().add(makeTreeItem(value));
             }

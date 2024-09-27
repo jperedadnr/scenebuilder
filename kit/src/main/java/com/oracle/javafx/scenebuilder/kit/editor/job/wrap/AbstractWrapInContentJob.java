@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -39,8 +40,9 @@ import com.oracle.javafx.scenebuilder.kit.editor.selection.Selection;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyC;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +77,7 @@ public abstract class AbstractWrapInContentJob extends AbstractWrapInJob {
 
         final DesignHierarchyMask newContainerMask
                 = new DesignHierarchyMask(newContainer);
-        assert newContainerMask.isAcceptingAccessory(Accessory.CONTENT);
+        assert newContainerMask.isAcceptingAccessory(DefaultAccessories.byName("CONTENT"));
 
         // Retrieve the new container property name to be used
         final PropertyName newContainerPropertyName

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -38,7 +39,9 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.tring.Abst
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.tring.BorderPaneTring;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
+
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.BorderPane;
@@ -69,24 +72,24 @@ public class BorderPaneDriver extends AbstractNodeDriver {
         
         final Bounds layoutBounds = borderPane.getLayoutBounds();
         final Bounds centerBounds = BorderPaneTring.computeCenterBounds(borderPane);
-        final Bounds topBounds = BorderPaneTring.computeAreaBounds(layoutBounds, centerBounds, Accessory.TOP);
-        final Bounds bottomBounds = BorderPaneTring.computeAreaBounds(layoutBounds, centerBounds, Accessory.BOTTOM);
-        final Bounds leftBounds = BorderPaneTring.computeAreaBounds(layoutBounds, centerBounds, Accessory.LEFT);
-        final Bounds rightBounds = BorderPaneTring.computeAreaBounds(layoutBounds, centerBounds, Accessory.RIGHT);
+        final Bounds topBounds = BorderPaneTring.computeAreaBounds(layoutBounds, centerBounds, DefaultAccessories.byName("TOP"));
+        final Bounds bottomBounds = BorderPaneTring.computeAreaBounds(layoutBounds, centerBounds, DefaultAccessories.byName("BOTTOM"));
+        final Bounds leftBounds = BorderPaneTring.computeAreaBounds(layoutBounds, centerBounds, DefaultAccessories.byName("LEFT"));
+        final Bounds rightBounds = BorderPaneTring.computeAreaBounds(layoutBounds, centerBounds, DefaultAccessories.byName("RIGHT"));
         
         final Accessory targetAccessory;
         if (centerBounds.contains(hitX, hitY)) {
-            targetAccessory = Accessory.CENTER;
+            targetAccessory = DefaultAccessories.byName("CENTER");
         } else if (topBounds.contains(hitX, hitY)) {
-            targetAccessory = Accessory.TOP;
+            targetAccessory = DefaultAccessories.byName("TOP");
         } else if (bottomBounds.contains(hitX, hitY)) {
-            targetAccessory = Accessory.BOTTOM;
+            targetAccessory = DefaultAccessories.byName("BOTTOM");
         } else if (leftBounds.contains(hitX, hitY)) {
-            targetAccessory = Accessory.LEFT;
+            targetAccessory = DefaultAccessories.byName("LEFT");
         } else if (rightBounds.contains(hitX, hitY)) {
-            targetAccessory = Accessory.RIGHT;
+            targetAccessory = DefaultAccessories.byName("RIGHT");
         } else {
-            targetAccessory = Accessory.CENTER;
+            targetAccessory = DefaultAccessories.byName("CENTER");
         }
         
         return new AccessoryDropTarget(fxomInstance, targetAccessory);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -133,6 +133,9 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
+
 import javafx.scene.SubScene;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Polygon;
@@ -1215,7 +1218,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
                     candidates.add(subComponent);
                 }
             }
-            for (DesignHierarchyMask.Accessory a : DesignHierarchyMask.Accessory.values()) {
+            for (Accessory a : DefaultAccessories.ACCESSORIES) {
                 if (m.isAcceptingAccessory(a)) {
                     final FXOMObject accessoryObject = m.getAccessory(a);
                     if ((accessoryObject != null) && accessoryObject.isNode()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Gluon and/or its affiliates.
+ * Copyright (c) 2022, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -42,7 +42,8 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
 import com.oracle.javafx.scenebuilder.kit.library.Library;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
@@ -82,7 +83,7 @@ public class AddContextMenuToSelectionJob extends BatchSelectionJob {
             final FXOMObject contextMenuObject = e.getValue();
             final Job insertJob = new InsertAsAccessoryJob(
                     contextMenuObject, fxomObject, 
-                    DesignHierarchyMask.Accessory.CONTEXT_MENU, 
+                    DefaultAccessories.byName("CONTEXT_MENU"),
                     getEditorController());
             result.add(insertJob);
         }

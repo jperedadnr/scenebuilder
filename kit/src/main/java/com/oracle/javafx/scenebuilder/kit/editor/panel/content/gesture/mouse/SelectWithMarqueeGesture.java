@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -38,11 +39,14 @@ import com.oracle.javafx.scenebuilder.kit.editor.selection.Selection;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -236,11 +240,11 @@ public class SelectWithMarqueeGesture extends AbstractMouseGesture {
                 }
             } else {
                 final List<Accessory> accessories = Arrays.asList(
-                        Accessory.CONTENT,
-                        Accessory.CENTER,
-                        Accessory.BOTTOM, Accessory.TOP,
-                        Accessory.LEFT, Accessory.RIGHT,
-                        Accessory.XAXIS, Accessory.YAXIS);
+                        DefaultAccessories.byName("CONTENT"),
+                        DefaultAccessories.byName("CENTER"),
+                        DefaultAccessories.byName("BOTTOM"), DefaultAccessories.byName("TOP"),
+                        DefaultAccessories.byName("LEFT"), DefaultAccessories.byName("RIGHT"),
+                        DefaultAccessories.byName("XAXIS"), DefaultAccessories.byName("YAXIS"));
                 for (Accessory accessory : accessories) {
                     if (m.isAcceptingAccessory(accessory)) {
                         final FXOMObject fxomObject = m.getAccessory(accessory);

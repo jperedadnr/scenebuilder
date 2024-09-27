@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -42,7 +42,8 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.DragEvent;
 
@@ -186,7 +187,7 @@ public class HierarchyDNDController {
         // The drop target must be a GRAPHIC AccessoryDropTarget
         if (dragController.isDropAccepted()
                 && dropTarget instanceof AccessoryDropTarget
-                && ((AccessoryDropTarget) dropTarget).getAccessory() == Accessory.GRAPHIC) {
+                && ((AccessoryDropTarget) dropTarget).getAccessory() == DefaultAccessories.byName("GRAPHIC")) {
             // Retrieve the GRAPHIC accessory owner
             final TreeItem<HierarchyItem> graphicOwnerTreeItem;
             if (treeItem != null) {
@@ -284,12 +285,13 @@ public class HierarchyDNDController {
                         accessory = ((HierarchyItemBorderPane) item).getPosition();
                     } else if (item instanceof HierarchyItemDialogPane) {
                         accessory = ((HierarchyItemDialogPane) item).getAccessory();
-                    } else if (item instanceof HierarchyItemExpansionPanel) {
-                        accessory = ((HierarchyItemExpansionPanel) item).getAccessory();
-                    } else if (item instanceof HierarchyItemExpandedPanel) {
-                        accessory = ((HierarchyItemExpandedPanel) item).getAccessory();
+                        // Case EXTERNAL: TODO
+//                    } else if (item instanceof HierarchyItemExpansionPanel) {
+//                        accessory = ((HierarchyItemExpansionPanel) item).getAccessory();
+//                    } else if (item instanceof HierarchyItemExpandedPanel) {
+//                        accessory = ((HierarchyItemExpandedPanel) item).getAccessory();
                     } else {
-                        accessory = Accessory.GRAPHIC;
+                        accessory = DefaultAccessories.byName("GRAPHIC");
                     }
                 } else {
                     // Set the drop target
@@ -435,20 +437,20 @@ public class HierarchyDNDController {
                     // Check if there is an accessory that can be accepted by the drop target.
                     // First we build the list of accessories that can be set by DND gesture.
                     final Accessory[] accessories = {
-                        Accessory.TOP,
-                        Accessory.LEFT,
-                        Accessory.CENTER,
-                        Accessory.RIGHT,
-                        Accessory.BOTTOM,
-                        Accessory.CONTENT,
-                        Accessory.CONTEXT_MENU,
-                        Accessory.GRAPHIC,
-                        Accessory.TOOLTIP,
-                        Accessory.HEADER,
-                        Accessory.DP_GRAPHIC,
-                        Accessory.DP_CONTENT,
-                        Accessory.EXPANDABLE_CONTENT,
-                        Accessory.SCENE
+                        DefaultAccessories.byName("TOP"),
+                        DefaultAccessories.byName("LEFT"),
+                        DefaultAccessories.byName("CENTER"),
+                        DefaultAccessories.byName("RIGHT"),
+                        DefaultAccessories.byName("BOTTOM"),
+                        DefaultAccessories.byName("CONTENT"),
+                        DefaultAccessories.byName("CONTEXT_MENU"),
+                        DefaultAccessories.byName("GRAPHIC"),
+                        DefaultAccessories.byName("TOOLTIP"),
+                        DefaultAccessories.byName("HEADER"),
+                        DefaultAccessories.byName("DP_GRAPHIC"),
+                        DefaultAccessories.byName("DP_CONTENT"),
+                        DefaultAccessories.byName("EXPANDABLE_CONTENT"),
+                        DefaultAccessories.byName("SCENE")
                     };
                     for (Accessory a : accessories) {
                         final AccessoryDropTarget dropTarget

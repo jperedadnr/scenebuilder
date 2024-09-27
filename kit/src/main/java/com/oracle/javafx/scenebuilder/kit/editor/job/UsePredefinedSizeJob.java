@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -42,6 +43,7 @@ import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +87,7 @@ public class UsePredefinedSizeJob extends Job {
             if (fxomObject != null && fxomObject.getSceneGraphObject() instanceof Scene) {
                 // Set the size of the scene's root
                 DesignHierarchyMask mask = new DesignHierarchyMask(fxomObject);
-                fxomObject = mask.getAccessory(DesignHierarchyMask.Accessory.ROOT);
+                fxomObject = mask.getAccessory(DefaultAccessories.byName("ROOT"));
                 assert fxomObject != null;
             }
 

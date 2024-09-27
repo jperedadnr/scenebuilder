@@ -90,9 +90,9 @@ import com.oracle.javafx.scenebuilder.kit.metadata.property.PropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.ClipboardEncoder;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PrefixedValue;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
 import com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.Utils;
 
 import java.io.File;
@@ -1945,11 +1945,11 @@ public class EditorController {
             final Set<FXOMObject> selectableObjects = new HashSet<>();
             // BorderPane special case : use accessories
             if (mask.getFxomObject().getSceneGraphObject() instanceof BorderPane) {
-                final FXOMObject top = mask.getAccessory(Accessory.TOP);
-                final FXOMObject left = mask.getAccessory(Accessory.LEFT);
-                final FXOMObject center = mask.getAccessory(Accessory.CENTER);
-                final FXOMObject right = mask.getAccessory(Accessory.RIGHT);
-                final FXOMObject bottom = mask.getAccessory(Accessory.BOTTOM);
+                final FXOMObject top = mask.getAccessory(DefaultAccessories.byName("TOP"));
+                final FXOMObject left = mask.getAccessory(DefaultAccessories.byName("LEFT"));
+                final FXOMObject center = mask.getAccessory(DefaultAccessories.byName("CENTER"));
+                final FXOMObject right = mask.getAccessory(DefaultAccessories.byName("RIGHT"));
+                final FXOMObject bottom = mask.getAccessory(DefaultAccessories.byName("BOTTOM"));
                 for (FXOMObject accessoryObject : new FXOMObject[]{
                     top, left, center, right, bottom}) {
                     if (accessoryObject != null) {
@@ -2014,11 +2014,11 @@ public class EditorController {
                 final DesignHierarchyMask mask = new DesignHierarchyMask(ancestor);
                 // BorderPane special case : use accessories
                 if (mask.getFxomObject().getSceneGraphObject() instanceof BorderPane) {
-                    final FXOMObject top = mask.getAccessory(Accessory.TOP);
-                    final FXOMObject left = mask.getAccessory(Accessory.LEFT);
-                    final FXOMObject center = mask.getAccessory(Accessory.CENTER);
-                    final FXOMObject right = mask.getAccessory(Accessory.RIGHT);
-                    final FXOMObject bottom = mask.getAccessory(Accessory.BOTTOM);
+                    final FXOMObject top = mask.getAccessory(DefaultAccessories.byName("TOP"));
+                    final FXOMObject left = mask.getAccessory(DefaultAccessories.byName("LEFT"));
+                    final FXOMObject center = mask.getAccessory(DefaultAccessories.byName("CENTER"));
+                    final FXOMObject right = mask.getAccessory(DefaultAccessories.byName("RIGHT"));
+                    final FXOMObject bottom = mask.getAccessory(DefaultAccessories.byName("BOTTOM"));
                     for (FXOMObject bpAccessoryObject : new FXOMObject[] {
                         top, left, center, right, bottom}) {
                         if (bpAccessoryObject != null 

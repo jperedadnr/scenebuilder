@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -35,10 +36,11 @@ import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.Accessory;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Objects;
+
 import javafx.scene.image.Image;
 
 /**
@@ -130,12 +132,12 @@ public class HierarchyItemBorderPane extends HierarchyItem {
 
     @Override
     public Image getPlaceHolderImage() {
-        return ImageUtils.getNodeIcon("BorderPane-" + position.name().toLowerCase(Locale.ROOT) + ".png"); //NOI18N
+        return ImageUtils.getNodeIcon("BorderPane-" + position.getName().toLowerCase(Locale.ROOT) + ".png"); //NOI18N
     }
 
     @Override
     public String getPlaceHolderInfo() {
-        return (mask != null ? null : I18N.getString("hierarchy.placeholder.insert") + position.name().toUpperCase(Locale.getDefault()));
+        return (mask != null ? null : I18N.getString("hierarchy.placeholder.insert") + position.getName().toUpperCase(Locale.getDefault()));
     }
 
     @Override

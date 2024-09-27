@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -38,9 +39,11 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
+
 import java.util.List;
+
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -68,89 +71,89 @@ public class WrapJobUtils {
 
         if (container.getSceneGraphObject() instanceof BorderPane) {
             // wrap/unwrap the child of a BorderPane
-            assert mask.isAcceptingAccessory(Accessory.TOP);
-            assert mask.isAcceptingAccessory(Accessory.LEFT);
-            assert mask.isAcceptingAccessory(Accessory.CENTER);
-            assert mask.isAcceptingAccessory(Accessory.RIGHT);
-            assert mask.isAcceptingAccessory(Accessory.BOTTOM);
+            assert mask.isAcceptingAccessory(DefaultAccessories.byName("TOP"));
+            assert mask.isAcceptingAccessory(DefaultAccessories.byName("LEFT"));
+            assert mask.isAcceptingAccessory(DefaultAccessories.byName("CENTER"));
+            assert mask.isAcceptingAccessory(DefaultAccessories.byName("RIGHT"));
+            assert mask.isAcceptingAccessory(DefaultAccessories.byName("BOTTOM"));
             assert children != null && children.size() == 1; // wrap job is executable
             final FXOMObject child = children.iterator().next();
 
-            final FXOMObject top = mask.getAccessory(Accessory.TOP);
-            final FXOMObject left = mask.getAccessory(Accessory.LEFT);
-            final FXOMObject center = mask.getAccessory(Accessory.CENTER);
-            final FXOMObject right = mask.getAccessory(Accessory.RIGHT);
-            final FXOMObject bottom = mask.getAccessory(Accessory.BOTTOM);
+            final FXOMObject top = mask.getAccessory(DefaultAccessories.byName("TOP"));
+            final FXOMObject left = mask.getAccessory(DefaultAccessories.byName("LEFT"));
+            final FXOMObject center = mask.getAccessory(DefaultAccessories.byName("CENTER"));
+            final FXOMObject right = mask.getAccessory(DefaultAccessories.byName("RIGHT"));
+            final FXOMObject bottom = mask.getAccessory(DefaultAccessories.byName("BOTTOM"));
             // Return same accessory as the child container one
             if (child.equals(top)) {
-                result = mask.getPropertyNameForAccessory(Accessory.TOP);
+                result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("TOP"));
             } else if (child.equals(bottom)) {
-                result = mask.getPropertyNameForAccessory(Accessory.BOTTOM);
+                result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("BOTTOM"));
             } else if (child.equals(center)) {
-                result = mask.getPropertyNameForAccessory(Accessory.CENTER);
+                result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("CENTER"));
             } else if (child.equals(left)) {
-                result = mask.getPropertyNameForAccessory(Accessory.LEFT);
+                result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("LEFT"));
             } else if (child.equals(right)) {
-                result = mask.getPropertyNameForAccessory(Accessory.RIGHT);
+                result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("RIGHT"));
             } else {
                 assert false;
                 result = null;
             }
         } else if (container.getSceneGraphObject() instanceof DialogPane) {
-            // wrap/unwrap the child of a DialodPane
-            assert mask.isAcceptingAccessory(Accessory.DP_CONTENT);
-            assert mask.isAcceptingAccessory(Accessory.DP_GRAPHIC);
-            assert mask.isAcceptingAccessory(Accessory.EXPANDABLE_CONTENT);
-            assert mask.isAcceptingAccessory(Accessory.HEADER);
+            // wrap/unwrap the child of a DialogPane
+            assert mask.isAcceptingAccessory(DefaultAccessories.byName("DP_CONTENT"));
+            assert mask.isAcceptingAccessory(DefaultAccessories.byName("DP_GRAPHIC"));
+            assert mask.isAcceptingAccessory(DefaultAccessories.byName("EXPANDABLE_CONTENT"));
+            assert mask.isAcceptingAccessory(DefaultAccessories.byName("HEADER"));
             assert children != null && children.size() == 1; // wrap job is executable
             final FXOMObject child = children.iterator().next();
 
-            final FXOMObject content = mask.getAccessory(Accessory.DP_CONTENT);
-            final FXOMObject graphic = mask.getAccessory(Accessory.DP_GRAPHIC);
-            final FXOMObject expandableContent = mask.getAccessory(Accessory.EXPANDABLE_CONTENT);
-            final FXOMObject header = mask.getAccessory(Accessory.HEADER);
+            final FXOMObject content = mask.getAccessory(DefaultAccessories.byName("DP_CONTENT"));
+            final FXOMObject graphic = mask.getAccessory(DefaultAccessories.byName("DP_GRAPHIC"));
+            final FXOMObject expandableContent = mask.getAccessory(DefaultAccessories.byName("EXPANDABLE_CONTENT"));
+            final FXOMObject header = mask.getAccessory(DefaultAccessories.byName("HEADER"));
             // Return same accessory as the child container one
             if (child.equals(content)) {
-                result = mask.getPropertyNameForAccessory(Accessory.DP_CONTENT);
+                result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("DP_CONTENT"));
             } else if (child.equals(graphic)) {
-                result = mask.getPropertyNameForAccessory(Accessory.DP_GRAPHIC);
+                result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("DP_GRAPHIC"));
             } else if (child.equals(expandableContent)) {
-                result = mask.getPropertyNameForAccessory(Accessory.EXPANDABLE_CONTENT);
+                result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("EXPANDABLE_CONTENT"));
             } else if (child.equals(header)) {
-                result = mask.getPropertyNameForAccessory(Accessory.HEADER);
+                result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("HEADER"));
             } else {
                 assert false;
                 result = null;
             }
-        } else if (mask.isAcceptingAccessory(Accessory.SCENE)) {
-            result = mask.getPropertyNameForAccessory(Accessory.SCENE);
-        } else if (mask.isAcceptingAccessory(Accessory.ROOT)) {
-            result = mask.getPropertyNameForAccessory(Accessory.ROOT);
+        } else if (mask.isAcceptingAccessory(DefaultAccessories.byName("SCENE"))) {
+            result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("SCENE"));
+        } else if (mask.isAcceptingAccessory(DefaultAccessories.byName("ROOT"))) {
+            result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("ROOT"));
         } else if (mask.isAcceptingSubComponent()) {
             result = mask.getSubComponentPropertyName();
         } else {
-            assert mask.isAcceptingAccessory(Accessory.CONTENT)
-                    || mask.isAcceptingAccessory(Accessory.GRAPHIC);
+            assert mask.isAcceptingAccessory(DefaultAccessories.byName("CONTENT"))
+                    || mask.isAcceptingAccessory(DefaultAccessories.byName("GRAPHIC"));
             assert children != null && children.size() == 1; // wrap job is executable
             final FXOMObject child = children.iterator().next();
 
-            if (mask.isAcceptingAccessory(Accessory.GRAPHIC) == false) {
+            if (mask.isAcceptingAccessory(DefaultAccessories.byName("GRAPHIC")) == false) {
                 // Containers accepting CONTENT only
-                assert mask.isAcceptingAccessory(Accessory.CONTENT);
-                result = mask.getPropertyNameForAccessory(Accessory.CONTENT);
-            } else if (mask.isAcceptingAccessory(Accessory.CONTENT) == false) {
+                assert mask.isAcceptingAccessory(DefaultAccessories.byName("CONTENT"));
+                result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("CONTENT"));
+            } else if (mask.isAcceptingAccessory(DefaultAccessories.byName("CONTENT")) == false) {
                 // Containers accepting GRAPHIC only
-                assert mask.isAcceptingAccessory(Accessory.GRAPHIC);
-                result = mask.getPropertyNameForAccessory(Accessory.GRAPHIC);
+                assert mask.isAcceptingAccessory(DefaultAccessories.byName("GRAPHIC"));
+                result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("GRAPHIC"));
             } else {
                 // Containers accepting both CONTENT and GRAPHIC
-                final FXOMObject content = mask.getAccessory(Accessory.CONTENT);
-                final FXOMObject graphic = mask.getAccessory(Accessory.GRAPHIC);
+                final FXOMObject content = mask.getAccessory(DefaultAccessories.byName("CONTENT"));
+                final FXOMObject graphic = mask.getAccessory(DefaultAccessories.byName("GRAPHIC"));
                 // Return same accessory as the child container one
                 if (child.equals(content)) {
-                    result = mask.getPropertyNameForAccessory(Accessory.CONTENT);
+                    result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("CONTENT"));
                 } else if (child.equals(graphic)) {
-                    result = mask.getPropertyNameForAccessory(Accessory.GRAPHIC);
+                    result = mask.getPropertyNameForAccessory(DefaultAccessories.byName("GRAPHIC"));
                 } else {
                     assert false;
                     result = null;

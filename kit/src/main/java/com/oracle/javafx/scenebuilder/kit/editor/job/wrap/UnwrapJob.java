@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -49,10 +50,12 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMProperty;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMPropertyC;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.DialogPane;
@@ -125,10 +128,10 @@ public class UnwrapJob extends BatchSelectionJob {
             if (parentContainerMask.isAcceptingSubComponent()) {
                 return childrenCount >= 1;
             } else {
-                assert parentContainerMask.isAcceptingAccessory(Accessory.CONTENT)
-                        || parentContainerMask.isAcceptingAccessory(Accessory.GRAPHIC)
-                        || parentContainerMask.isAcceptingAccessory(Accessory.ROOT)
-                        || parentContainerMask.isAcceptingAccessory(Accessory.SCENE)
+                assert parentContainerMask.isAcceptingAccessory(DefaultAccessories.byName("CONTENT"))
+                        || parentContainerMask.isAcceptingAccessory(DefaultAccessories.byName("GRAPHIC"))
+                        || parentContainerMask.isAcceptingAccessory(DefaultAccessories.byName("ROOT"))
+                        || parentContainerMask.isAcceptingAccessory(DefaultAccessories.byName("SCENE"))
                         || parentContainerMask.getFxomObject().getSceneGraphObject() instanceof BorderPane
                         || parentContainerMask.getFxomObject().getSceneGraphObject() instanceof DialogPane;
                 if (childrenCount != 1) {
@@ -136,8 +139,8 @@ public class UnwrapJob extends BatchSelectionJob {
                 }
 
                 final FXOMObject child = children.iterator().next();
-                if (parentContainerMask.isAcceptingAccessory(Accessory.SCENE)) {
-                    return parentContainerMask.isAcceptingAccessory(Accessory.SCENE, child);
+                if (parentContainerMask.isAcceptingAccessory(DefaultAccessories.byName("SCENE"))) {
+                    return parentContainerMask.isAcceptingAccessory(DefaultAccessories.byName("SCENE"), child);
                 } else {
                     return true;
                 }
@@ -365,9 +368,9 @@ public class UnwrapJob extends BatchSelectionJob {
                 if (tabs.size() >= 1) {
                     final FXOMObject tab = tabs.get(0);
                     final DesignHierarchyMask tabMask = new DesignHierarchyMask(tab);
-                    assert tabMask.isAcceptingAccessory(Accessory.CONTENT);
-                    if (tabMask.getAccessory(Accessory.CONTENT) != null) {
-                        result.add(tabMask.getAccessory(Accessory.CONTENT));
+                    assert tabMask.isAcceptingAccessory(DefaultAccessories.byName("CONTENT"));
+                    if (tabMask.getAccessory(DefaultAccessories.byName("CONTENT")) != null) {
+                        result.add(tabMask.getAccessory(DefaultAccessories.byName("CONTENT")));
                     }
                 }
             } else {
@@ -375,25 +378,25 @@ public class UnwrapJob extends BatchSelectionJob {
             }
         } else {
             // BorderPane => unwrap CENTER accessory
-            if (mask.isAcceptingAccessory(Accessory.CENTER)
-                    && mask.getAccessory(Accessory.CENTER) != null) {
-                result.add(mask.getAccessory(Accessory.CENTER));
+            if (mask.isAcceptingAccessory(DefaultAccessories.byName("CENTER"))
+                    && mask.getAccessory(DefaultAccessories.byName("CENTER")) != null) {
+                result.add(mask.getAccessory(DefaultAccessories.byName("CENTER")));
             } // DialogPane => unwrap DP_CONTENT accessory
-            else if (mask.isAcceptingAccessory(Accessory.DP_CONTENT)
-                    && mask.getAccessory(Accessory.DP_CONTENT) != null) {
-                result.add(mask.getAccessory(Accessory.DP_CONTENT));
+            else if (mask.isAcceptingAccessory(DefaultAccessories.byName("DP_CONTENT"))
+                    && mask.getAccessory(DefaultAccessories.byName("DP_CONTENT")) != null) {
+                result.add(mask.getAccessory(DefaultAccessories.byName("DP_CONTENT")));
             } // ScrollPane => unwrap CONTENT accessory
-            else if (mask.isAcceptingAccessory(Accessory.CONTENT)
-                    && mask.getAccessory(Accessory.CONTENT) != null) {
-                result.add(mask.getAccessory(Accessory.CONTENT));
+            else if (mask.isAcceptingAccessory(DefaultAccessories.byName("CONTENT"))
+                    && mask.getAccessory(DefaultAccessories.byName("CONTENT")) != null) {
+                result.add(mask.getAccessory(DefaultAccessories.byName("CONTENT")));
             } // Scene => unwrap ROOT accessory
-            else if (mask.isAcceptingAccessory(Accessory.ROOT)
-                    && mask.getAccessory(Accessory.ROOT) != null) {
-                result.add(mask.getAccessory(Accessory.ROOT));
+            else if (mask.isAcceptingAccessory(DefaultAccessories.byName("ROOT"))
+                    && mask.getAccessory(DefaultAccessories.byName("ROOT")) != null) {
+                result.add(mask.getAccessory(DefaultAccessories.byName("ROOT")));
             } // Window => unwrap SCENE accessory
-            else if (mask.isAcceptingAccessory(Accessory.SCENE)
-                    && mask.getAccessory(Accessory.SCENE) != null) {
-                result.add(mask.getAccessory(Accessory.SCENE));
+            else if (mask.isAcceptingAccessory(DefaultAccessories.byName("SCENE"))
+                    && mask.getAccessory(DefaultAccessories.byName("SCENE")) != null) {
+                result.add(mask.getAccessory(DefaultAccessories.byName("SCENE")));
             }
         }
         return result;

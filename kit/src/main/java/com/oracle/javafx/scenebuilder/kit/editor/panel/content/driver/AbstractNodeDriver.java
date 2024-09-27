@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -57,6 +58,8 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.tring.Node
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
+
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.SubScene;
@@ -168,8 +171,8 @@ public abstract class AbstractNodeDriver extends AbstractDriver {
         if (mask.isFreeChildPositioning()) {
             result = new ContainerXYDropTarget(fxomInstance, sceneX, sceneY);
         } else {
-            if (mask.isAcceptingAccessory(DesignHierarchyMask.Accessory.CONTENT)) {
-                result = new AccessoryDropTarget(fxomInstance, DesignHierarchyMask.Accessory.CONTENT);
+            if (mask.isAcceptingAccessory(DefaultAccessories.byName("CONTENT"))) {
+                result = new AccessoryDropTarget(fxomInstance, DefaultAccessories.byName("CONTENT"));
             } else {
                 result = new ContainerZDropTarget(fxomInstance, null);
             }

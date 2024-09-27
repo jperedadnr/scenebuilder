@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -48,7 +49,7 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
 import com.oracle.javafx.scenebuilder.kit.util.MathUtils;
 
 import java.util.HashSet;
@@ -264,7 +265,7 @@ public class DragGesture extends AbstractGesture {
         if (dropTarget == null) {
             if (dragSource.isSingleTooltipOnly()) {
                 assert hitObject instanceof FXOMInstance;
-                dropTarget = new AccessoryDropTarget((FXOMInstance)hitObject, Accessory.TOOLTIP);
+                dropTarget = new AccessoryDropTarget((FXOMInstance)hitObject, DefaultAccessories.byName("TOOLTIP"));
                 newHitParent = hitObject;
                 newHitParentMask = m;
             }
@@ -274,7 +275,7 @@ public class DragGesture extends AbstractGesture {
         if (dropTarget == null) {
             if (dragSource.isSingleContextMenuOnly()) {
                 assert hitObject instanceof FXOMInstance;
-                dropTarget = new AccessoryDropTarget((FXOMInstance)hitObject, Accessory.CONTEXT_MENU);
+                dropTarget = new AccessoryDropTarget((FXOMInstance)hitObject, DefaultAccessories.byName("CONTEXT_MENU"));
                 newHitParent = hitObject;
                 newHitParentMask = m;
             }
@@ -301,11 +302,11 @@ public class DragGesture extends AbstractGesture {
             }
         }
         
-        // hitObject accepts Accessory.CONTENT
+        // hitObject accepts DefaultAccessories.byName("CONTENT
         if (dropTarget == null) {
-            if (m.isAcceptingAccessory(Accessory.CONTENT)) {
+            if (m.isAcceptingAccessory(DefaultAccessories.byName("CONTENT"))) {
                 assert hitObject instanceof FXOMInstance;
-                dropTarget = new AccessoryDropTarget((FXOMInstance)hitObject, Accessory.CONTENT);
+                dropTarget = new AccessoryDropTarget((FXOMInstance)hitObject, DefaultAccessories.byName("CONTENT"));
                 newHitParent = hitObject;
                 newHitParentMask = m;
             }

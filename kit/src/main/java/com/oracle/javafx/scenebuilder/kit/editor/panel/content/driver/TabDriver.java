@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -44,7 +45,8 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.tring.Abst
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.tring.TabTring;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
+
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
@@ -104,7 +106,7 @@ public class TabDriver extends AbstractDriver {
     @Override
     public AbstractDropTarget makeDropTarget(FXOMObject fxomObject, double sceneX, double sceneY) {
         assert fxomObject instanceof FXOMInstance;
-        return new AccessoryDropTarget((FXOMInstance) fxomObject, Accessory.CONTENT);
+        return new AccessoryDropTarget((FXOMInstance) fxomObject, DefaultAccessories.byName("CONTENT"));
     }
 
     @Override

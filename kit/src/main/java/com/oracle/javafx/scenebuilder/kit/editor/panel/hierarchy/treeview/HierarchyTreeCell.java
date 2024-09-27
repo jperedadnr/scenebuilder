@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -64,13 +64,13 @@ import com.oracle.javafx.scenebuilder.kit.glossary.Glossary;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
 import javafx.collections.ObservableList;
@@ -306,7 +306,7 @@ public class HierarchyTreeCell<T extends HierarchyItem> extends TreeCell<Hierarc
 
                         if (item.isPlaceHolder()) {
                             cell = HierarchyTreeCell.this;
-                        } else if (accessoryDropTarget.getAccessory() == Accessory.GRAPHIC) {
+                        } else if (accessoryDropTarget.getAccessory() == DefaultAccessories.byName("GRAPHIC")) {
                             // Check if an empty graphic TreeItem has been added
                             final TreeItem<HierarchyItem> graphicTreeItem
                                     = dndController.getEmptyGraphicTreeItemFor(treeItem);

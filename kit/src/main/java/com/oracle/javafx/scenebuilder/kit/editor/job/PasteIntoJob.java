@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -42,7 +43,8 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.ClipboardDecoder;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,9 +97,9 @@ public class PasteIntoJob extends BatchSelectionJob {
                     } // Build InsertAsAccessory jobs for single source selection
                     else if (newObjects.size() == 1) {
                         final FXOMObject newObject = newObjects.get(0);
-                        final Accessory[] accessories = {Accessory.CONTENT,
-                            Accessory.CONTEXT_MENU, Accessory.GRAPHIC,
-                            Accessory.TOOLTIP};
+                        final Accessory[] accessories = {DefaultAccessories.byName("CONTENT"),
+                            DefaultAccessories.byName("CONTEXT_MENU"), DefaultAccessories.byName("GRAPHIC"),
+                            DefaultAccessories.byName("TOOLTIP")};
                         for (Accessory a : accessories) {
                             if (targetMask.isAcceptingAccessory(a, newObject)
                                     && targetMask.getAccessory(a) == null) {
