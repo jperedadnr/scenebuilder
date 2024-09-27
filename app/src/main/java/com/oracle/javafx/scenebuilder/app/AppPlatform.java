@@ -54,6 +54,7 @@ public class AppPlatform {
     private static String applicationDataFolder;
     private static String userLibraryFolder;
     private static String messageBoxFolder;
+    private static String logsFolder;
     private static MessageBox<MessageBoxMessage> messageBox;
     
     public static synchronized String getApplicationDataFolder() {
@@ -90,6 +91,17 @@ public class AppPlatform {
         return userLibraryFolder;
     }
 
+    /**
+     * Returns the directory path for logs. Default path is "${user.home}/.scenebuilder/logs/".
+     * @return Directory path for Scene Builder logs
+     */
+    public static synchronized String getLogFolder() {
+        if (logsFolder == null) {
+            logsFolder = Paths.get(System.getProperty("user.home"), ".scenebuilder", "logs").toString(); //NOI18N
+        }
+        return logsFolder;
+    }
+
     public static boolean requestStart(
             AppNotificationHandler notificationHandler, Application.Parameters parameters)  
     throws IOException {
@@ -123,19 +135,26 @@ public class AppPlatform {
         
         try {
             Files.createDirectories(Paths.get(getMessageBoxFolder()));
+            Files.createDirectories(Paths.get(getLogFolder()));
         } catch(FileAlreadyExistsException x) {
             // Fine
         }
         
         final boolean result;
         messageBox = new MessageBox<>(getMessageBoxFolder(), MessageBoxMessage.class, 1000 /* ms */);
+        // Fix Start: Github Issue #301
+        final List<String> parametersUnnamed = new ArrayList<>(parameters.getUnnamed());
+        if (IS_MAC) {
+            parametersUnnamed.removeIf(p -> p.startsWith("-psn"));
+        }
+        // Fix End
         if (messageBox.grab(new MessageBoxDelegate(notificationHandler))) {
-            notificationHandler.handleLaunch(parameters.getUnnamed());
+            notificationHandler.handleLaunch(parametersUnnamed);
             result = true;
         } else {
             result = false;
             final MessageBoxMessage unamedParameters 
-                    = new MessageBoxMessage(parameters.getUnnamed());
+                    = new MessageBoxMessage(parametersUnnamed);
             try {
                 messageBox.sendMessage(unamedParameters);
             } catch(InterruptedException x) {

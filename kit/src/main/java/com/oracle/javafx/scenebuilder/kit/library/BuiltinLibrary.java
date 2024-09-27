@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -67,8 +67,6 @@ public class BuiltinLibrary extends Library {
     private final BuiltinSectionComparator sectionComparator
             = new BuiltinSectionComparator();
     
-    private static final String FX8_QUALIFIER = " (FX8)"; //NOI18N
-    
     // This qualifier is for use to provide a flavor of a component that has no
     // children, in addition to the one having children. Typical use is for
     // Accordion, ScrollPane, SplitPane, TabPane, TitledPane (see DTL-6274).
@@ -90,15 +88,36 @@ public class BuiltinLibrary extends Library {
         }
         return library;
     }
-    
-    public static String getFX8Qualifier() {
-        return FX8_QUALIFIER;
-    }
-    
+
     public static String getEmptyQualifier() {
         return EMPTY_QUALIFIER;
     }
-    
+
+    /**
+     * Creates the FXML content to import a given class as follows:
+     * <pre>{@code
+     *     <?xml version="1.0" encoding="UTF-8"?> //NOI18N
+     *     <?import a.b.C?>
+     *     <C/>
+     * }</pre>
+     *
+     * @param componentClass the class
+     * @return a String with the FXML content
+     */
+    public static String makeFxmlText(Class<?> componentClass) {
+        final StringBuilder sb = new StringBuilder();
+
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //NOI18N
+        sb.append("<?import "); //NOI18N
+        sb.append(componentClass.getCanonicalName());
+        sb.append("?>"); //NOI18N
+        sb.append("<"); //NOI18N
+        sb.append(componentClass.getSimpleName());
+        sb.append("/>\n"); //NOI18N
+
+        return sb.toString();
+    }
+
     /*
      * Library
      */
@@ -127,9 +146,9 @@ public class BuiltinLibrary extends Library {
                 "AccordionEmpty", "Accordion", EMPTY_QUALIFIER); //NOI18N
         addRegionItem200x200(javafx.scene.layout.AnchorPane.class, TAG_CONTAINERS);
         addRegionItem200x200(javafx.scene.layout.BorderPane.class, TAG_CONTAINERS);
-        addCustomizedItem(javafx.scene.control.ButtonBar.class, TAG_CONTAINERS, FX8_QUALIFIER);
-        addCustomizedItem(javafx.scene.control.DialogPane.class, TAG_CONTAINERS, FX8_QUALIFIER);
-        addDefaultItem(javafx.scene.control.DialogPane.class, TAG_CONTAINERS, EMPTY_QUALIFIER, FX8_QUALIFIER);
+        addCustomizedItem(javafx.scene.control.ButtonBar.class, TAG_CONTAINERS);
+        addCustomizedItem(javafx.scene.control.DialogPane.class, TAG_CONTAINERS);
+        addDefaultItem(javafx.scene.control.DialogPane.class, TAG_CONTAINERS, EMPTY_QUALIFIER);
         addRegionItem200x200(javafx.scene.layout.FlowPane.class, TAG_CONTAINERS);
         addCustomizedItem(javafx.scene.layout.GridPane.class, TAG_CONTAINERS);
         addRegionItem200x100(javafx.scene.layout.HBox.class, TAG_CONTAINERS);
@@ -147,7 +166,7 @@ public class BuiltinLibrary extends Library {
         addCustomizedItem(javafx.scene.control.TabPane.class, TAG_CONTAINERS);
         addCustomizedItem(javafx.scene.control.TabPane.class, TAG_CONTAINERS,
                 "TabPaneEmpty", "TabPane", EMPTY_QUALIFIER); //NOI18N
-        addRegionItem200x200(javafx.scene.text.TextFlow.class, TAG_CONTAINERS, FX8_QUALIFIER);
+        addRegionItem200x200(javafx.scene.text.TextFlow.class, TAG_CONTAINERS);
         addRegionItem200x200(javafx.scene.layout.TilePane.class, TAG_CONTAINERS);
         addCustomizedItem(javafx.scene.control.TitledPane.class, TAG_CONTAINERS);
         addRegionItem200x200(javafx.scene.control.TitledPane.class, TAG_CONTAINERS, EMPTY_QUALIFIER);
@@ -160,7 +179,7 @@ public class BuiltinLibrary extends Library {
         addCustomizedItem(javafx.scene.control.ChoiceBox.class, TAG_CONTROLS);
         addDefaultItem(javafx.scene.control.ColorPicker.class, TAG_CONTROLS);
         addCustomizedItem(javafx.scene.control.ComboBox.class, TAG_CONTROLS);
-        addDefaultItem(javafx.scene.control.DatePicker.class, TAG_CONTROLS, FX8_QUALIFIER);
+        addDefaultItem(javafx.scene.control.DatePicker.class, TAG_CONTROLS);
         addCustomizedItem(javafx.scene.web.HTMLEditor.class, TAG_CONTROLS);
         addCustomizedItem(javafx.scene.control.Hyperlink.class, TAG_CONTROLS);
         addCustomizedItem(javafx.scene.image.ImageView.class, TAG_CONTROLS);
@@ -186,15 +205,15 @@ public class BuiltinLibrary extends Library {
                 "SliderH", "Slider-h", HORIZONTAL_QUALIFIER); //NOI18N
         addCustomizedItem(javafx.scene.control.Slider.class, TAG_CONTROLS,
                 "SliderV", "Slider-v", VERTICAL_QUALIFIER); //NOI18N
-        addDefaultItem(javafx.scene.control.Spinner.class, TAG_CONTROLS, FX8_QUALIFIER);
+        addDefaultItem(javafx.scene.control.Spinner.class, TAG_CONTROLS);
         addCustomizedItem(javafx.scene.control.SplitMenuButton.class, TAG_CONTROLS);
         addCustomizedItem(javafx.scene.control.TableColumn.class, TAG_CONTROLS);
         addCustomizedItem(javafx.scene.control.TableView.class, TAG_CONTROLS);
         addRegionItem200x200(javafx.scene.control.TextArea.class, TAG_CONTROLS);
         addDefaultItem(javafx.scene.control.TextField.class, TAG_CONTROLS);
         addCustomizedItem(javafx.scene.control.ToggleButton.class, TAG_CONTROLS);
-        addCustomizedItem(javafx.scene.control.TreeTableColumn.class, TAG_CONTROLS, FX8_QUALIFIER);
-        addCustomizedItem(javafx.scene.control.TreeTableView.class, TAG_CONTROLS, FX8_QUALIFIER);
+        addCustomizedItem(javafx.scene.control.TreeTableColumn.class, TAG_CONTROLS);
+        addCustomizedItem(javafx.scene.control.TreeTableView.class, TAG_CONTROLS);
         addRegionItem200x200(javafx.scene.control.TreeView.class, TAG_CONTROLS);
         addCustomizedItem(javafx.scene.web.WebView.class, TAG_CONTROLS);
         
@@ -213,24 +232,24 @@ public class BuiltinLibrary extends Library {
         addRegionItem200x200(javafx.scene.layout.Region.class, TAG_MISCELLANEOUS);
         addCustomizedItem(javafx.scene.Scene.class, TAG_MISCELLANEOUS);
         addCustomizedItem(javafx.stage.Stage.class, TAG_MISCELLANEOUS);
-        addCustomizedItem(javafx.scene.SubScene.class, TAG_MISCELLANEOUS, FX8_QUALIFIER);
-        addDefaultItem(javafx.embed.swing.SwingNode.class, TAG_MISCELLANEOUS, FX8_QUALIFIER);
+        addCustomizedItem(javafx.scene.SubScene.class, TAG_MISCELLANEOUS);
+        addDefaultItem(javafx.embed.swing.SwingNode.class, TAG_MISCELLANEOUS);
         addCustomizedItem(javafx.scene.control.Tooltip.class, TAG_MISCELLANEOUS);
 
         // Shapes
         addCustomizedItem(javafx.scene.shape.Arc.class, TAG_SHAPES);
         addDefaultItem(javafx.scene.shape.ArcTo.class, TAG_SHAPES);
-        addCustomizedItem(javafx.scene.shape.Box.class, TAG_SHAPES, FX8_QUALIFIER);
+        addCustomizedItem(javafx.scene.shape.Box.class, TAG_SHAPES);
         addCustomizedItem(javafx.scene.shape.Circle.class, TAG_SHAPES);
         addDefaultItem(javafx.scene.shape.ClosePath.class, TAG_SHAPES);
         addCustomizedItem(javafx.scene.shape.CubicCurve.class, TAG_SHAPES);
         addDefaultItem(javafx.scene.shape.CubicCurveTo.class, TAG_SHAPES);
-        addCustomizedItem(javafx.scene.shape.Cylinder.class, TAG_SHAPES, FX8_QUALIFIER);
+        addCustomizedItem(javafx.scene.shape.Cylinder.class, TAG_SHAPES);
         addCustomizedItem(javafx.scene.shape.Ellipse.class, TAG_SHAPES);
         addDefaultItem(javafx.scene.shape.HLineTo.class, TAG_SHAPES);
         addCustomizedItem(javafx.scene.shape.Line.class, TAG_SHAPES);
         addDefaultItem(javafx.scene.shape.LineTo.class, TAG_SHAPES);
-        addDefaultItem(javafx.scene.shape.MeshView.class, TAG_SHAPES, FX8_QUALIFIER);
+        addDefaultItem(javafx.scene.shape.MeshView.class, TAG_SHAPES);
         addDefaultItem(javafx.scene.shape.MoveTo.class, TAG_SHAPES);
         addCustomizedItem(javafx.scene.shape.Path.class, TAG_SHAPES);
         addCustomizedItem(javafx.scene.shape.Polygon.class, TAG_SHAPES);
@@ -238,7 +257,7 @@ public class BuiltinLibrary extends Library {
         addCustomizedItem(javafx.scene.shape.QuadCurve.class, TAG_SHAPES);
         addDefaultItem(javafx.scene.shape.QuadCurveTo.class, TAG_SHAPES);
         addCustomizedItem(javafx.scene.shape.Rectangle.class, TAG_SHAPES);
-        addCustomizedItem(javafx.scene.shape.Sphere.class, TAG_SHAPES, FX8_QUALIFIER);
+        addCustomizedItem(javafx.scene.shape.Sphere.class, TAG_SHAPES);
         addCustomizedItem(javafx.scene.shape.SVGPath.class, TAG_SHAPES);
         addCustomizedItem(javafx.scene.text.Text.class, TAG_SHAPES);
         addDefaultItem(javafx.scene.shape.VLineTo.class, TAG_SHAPES);
@@ -254,10 +273,10 @@ public class BuiltinLibrary extends Library {
         addCustomizedItem(javafx.scene.chart.StackedBarChart.class, TAG_CHARTS);
         
         // 3D
-        addCustomizedItem(javafx.scene.AmbientLight.class, TAG_3D, FX8_QUALIFIER);
-        addDefaultItem(javafx.scene.ParallelCamera.class, TAG_3D, FX8_QUALIFIER);
-        addDefaultItem(javafx.scene.PerspectiveCamera.class, TAG_3D, FX8_QUALIFIER);
-        addCustomizedItem(javafx.scene.PointLight.class, TAG_3D, FX8_QUALIFIER);
+        addCustomizedItem(javafx.scene.AmbientLight.class, TAG_3D);
+        addDefaultItem(javafx.scene.ParallelCamera.class, TAG_3D);
+        addDefaultItem(javafx.scene.PerspectiveCamera.class, TAG_3D);
+        addCustomizedItem(javafx.scene.PointLight.class, TAG_3D);
 
         addExternalItems();
     }
@@ -364,31 +383,7 @@ public class BuiltinLibrary extends Library {
     private void addItem(String name, String fxmlText, String section, String iconName) {
         final URL iconURL = ImageUtils.getNodeIconURL(iconName + ".png"); //NOI18N
         final LibraryItem item = new LibraryItem(name, section, fxmlText, iconURL, this);
-        itemsProperty.add(item);
-    }
-    
-    
-    public static String makeFxmlText(Class<?> componentClass) {
-        final StringBuilder sb = new StringBuilder();
-        
-        /*
-         * <?xml version="1.0" encoding="UTF-8"?> //NOI18N
-         * 
-         * <?import a.b.C?>
-         * 
-         * <C/>
-         */
-        
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //NOI18N
-        
-        sb.append("<?import "); //NOI18N
-        sb.append(componentClass.getCanonicalName());
-        sb.append("?>"); //NOI18N
-        sb.append("<"); //NOI18N
-        sb.append(componentClass.getSimpleName());
-        sb.append("/>\n"); //NOI18N
-        
-        return sb.toString();
+        getItems().add(item);
     }
     
     private static String makeRegionFxmlText(Class<? extends Region> componentClass, 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2019 Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2022, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -1220,6 +1220,8 @@ public class Metadata {
             new PropertyName("unitIncrement");
     private final PropertyName upperBoundName = 
             new PropertyName("upperBound");
+    private final PropertyName useSystemMenuBarName = 
+            new PropertyName("useSystemMenuBar");
     private final PropertyName userAgentStylesheetName = 
             new PropertyName("userAgentStylesheet");
     private final PropertyName valignmentName = 
@@ -4362,6 +4364,11 @@ public class Metadata {
                 true, /* readWrite */
                 100.0, /* defaultValue */
                 new InspectorPath("Properties", "Specific", 98));
+    private final ValuePropertyMetadata useSystemMenuBarPropertyMetadata =
+            new BooleanPropertyMetadata(useSystemMenuBarName, 
+                    true, /* readWrite */
+                    false, 
+                    new InspectorPath("Properties", "Node", 25));
     private final ValuePropertyMetadata userAgentStylesheetPropertyMetadata =
             new StringPropertyMetadata(
                 userAgentStylesheetName,
@@ -5278,6 +5285,7 @@ public class Metadata {
         MenuBarMetadata.getProperties().add(accessibleRole_MENU_BAR_PropertyMetadata);
         MenuBarMetadata.getProperties().add(menusPropertyMetadata);
         MenuBarMetadata.getProperties().add(styleClass_c18_PropertyMetadata);
+        MenuBarMetadata.getProperties().add(useSystemMenuBarPropertyMetadata);
 
         MenuButtonMetadata.getProperties().add(accessibleRole_MENU_BUTTON_PropertyMetadata);
         MenuButtonMetadata.getProperties().add(focusTraversable_true_PropertyMetadata);
@@ -6129,7 +6137,6 @@ public class Metadata {
         hiddenProperties.add(new PropertyName("typeSelector"));
         hiddenProperties.add(new PropertyName("undoable"));
         hiddenProperties.add(new PropertyName("userData"));
-        hiddenProperties.add(new PropertyName("useSystemMenuBar"));
         hiddenProperties.add(new PropertyName("valueChanging"));
         hiddenProperties.add(new PropertyName("valueConverter"));
         hiddenProperties.add(new PropertyName("valueFactory"));

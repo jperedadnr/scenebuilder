@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2019, Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2023, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -76,6 +76,7 @@ import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.Selection;
 import com.oracle.javafx.scenebuilder.kit.editor.util.ContextMenuController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMIntrinsic;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
@@ -104,6 +105,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -813,6 +815,13 @@ public class EditorController {
      */
     public FXOMDocument getFxomDocument() {
         return fxomDocumentProperty.getValue();
+    }
+
+    /**
+     * @return the editor's document
+     */
+    public Optional<FXOMDocument> fxomDocument() {
+        return Optional.ofNullable(getFxomDocument());
     }
     
     /**
@@ -2557,7 +2566,7 @@ public class EditorController {
         final FXOMDocument newFxomDocument;
         
         if (fxmlText != null) {
-            newFxomDocument = new FXOMDocument(fxmlText, fxmlLocation, getLibrary().getClassLoader(), resources);
+            newFxomDocument = new FXOMDocument(fxmlText, fxmlLocation, getLibrary().getClassLoader(), resources, FXOMDocumentSwitch.NORMALIZED);
         } else {
             newFxomDocument = null;
         }

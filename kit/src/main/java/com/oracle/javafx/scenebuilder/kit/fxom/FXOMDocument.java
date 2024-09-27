@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2019 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2023, Gluon and/or its affiliates.
  * Copyright (c) 2012, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -33,9 +33,12 @@
 package com.oracle.javafx.scenebuilder.kit.fxom;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -43,9 +46,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Node;
@@ -80,16 +86,38 @@ public class FXOMDocument {
     
     private List<Class<?>> initialDeclaredClasses;
     
-    public FXOMDocument(String fxmlText, URL location, ClassLoader classLoader, ResourceBundle resources, boolean normalize) throws IOException {
+    /**
+     * Creates a new {@link FXOMDocument} from given FXML source. Depending on the
+     * use case, the {@link FXOMDocumentSwitch} items can be used to configure the
+     * document creation process according to specific needs. E.g. normalization is
+     * not enabled by default, thus if required the {@link FXOMDocumentSwitch}
+     * {@code NORMALIZED} should be added as constructor argument.
+     * 
+     * @param fxmlText    FXML source
+     * @param location    {@link URL} describing the actual document location
+     * @param classLoader {@link ClassLoader} to be used
+     * @param resources   {@link ResourceBundle} to be used
+     * @param switches    {@link FXOMDocumentSwitch} configuration options to enable
+     *                    or disable certain steps in {@link FXOMDocument} creation
+     *                    (e.g. enforcing normalization)
+     * @throws IOException when the fxmlText cannot be loaded
+     */
+    public FXOMDocument(String fxmlText, URL location, ClassLoader classLoader, ResourceBundle resources, FXOMDocumentSwitch... switches) throws IOException {
         this.glue = new GlueDocument(fxmlText);
         this.location = location;
         this.classLoader = classLoader;
         this.resources = resources;
         initialDeclaredClasses = new ArrayList<>();
         if (this.glue.getRootElement() != null) {
+            String fxmlTextToLoad = fxmlText;
+            Set<FXOMDocumentSwitch> availableSwitches = Set.of(switches);
+            if (!availableSwitches.contains(FXOMDocumentSwitch.FOR_PREVIEW)) {
+                final FXMLPropertiesDisabler fxmlPropertiesDisabler = new FXMLPropertiesDisabler();
+                fxmlTextToLoad = fxmlPropertiesDisabler.disableProperties(fxmlText);
+            }
             final FXOMLoader loader = new FXOMLoader(this);
-            loader.load(fxmlText);
-            if (normalize) {
+            loader.load(fxmlTextToLoad);
+            if (availableSwitches.contains(FXOMDocumentSwitch.NORMALIZED)) {
                 final FXOMNormalizer normalizer = new FXOMNormalizer(this);
                 normalizer.normalize();
             }
@@ -102,13 +130,7 @@ public class FXOMDocument {
 
         hasGluonControls = fxmlText.contains(EditorPlatform.GLUON_PACKAGE);
     }
-    
-    
-    public FXOMDocument(String fxmlText, URL location, ClassLoader classLoader, ResourceBundle resources) throws IOException {
-        this(fxmlText, location, classLoader, resources, true /* normalize */);
-    }
-    
-    
+        
     public FXOMDocument() {
         this.glue = new GlueDocument();
     }
@@ -119,6 +141,28 @@ public class FXOMDocument {
     
     public URL getLocation() {
         return location;
+    }
+
+    public Optional<URL> location() {
+        return Optional.ofNullable(getLocation());
+    }
+
+    public Optional<Path> locationPath() {
+        return locationURI()
+                // this is used instead of Paths::get to match the original implementation
+                .map(File::new)
+                .map(File::toPath);
+    }
+
+    public Optional<URI> locationURI() {
+        if (location == null)
+            return Optional.empty();
+
+        try {
+            return Optional.ofNullable(location.toURI());
+        } catch (URISyntaxException e) {
+            return Optional.empty();
+        }
     }
 
     public void setLocation(URL location) {
@@ -442,5 +486,26 @@ public class FXOMDocument {
     public static interface SceneGraphHolder {
         public void fxomDocumentWillRefreshSceneGraph(FXOMDocument fxomDocument);
         public void fxomDocumentDidRefreshSceneGraph(FXOMDocument fxomDocument);
+    }
+    
+    /**
+     * Depending on where the {@link FXOMDocument} shall be used, 
+     * it is necessary to configure the {@link FXOMDocument} creation process.
+     * The switches here can be used to configure the creation process in the desired way.
+     */
+    public enum FXOMDocumentSwitch {
+        /**
+         * When this flag is present, the {@link FXOMDocument} will be normalized (see {@link FXOMNormalizer}).
+         */
+        NORMALIZED,
+        
+        /**
+         * When this flag is present during {@link FXOMDocument} creation, the
+         * {@link FXMLPropertiesDisabler} will be used to modify the FXML source in such
+         * a way that the included settings will not interfere Scene Builder's
+         * configuration. One possible example here is the option to use the MacOS
+         * system menu bar.
+         */
+        FOR_PREVIEW;
     }
 }

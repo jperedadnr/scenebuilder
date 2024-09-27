@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Gluon and/or its affiliates.
+ * Copyright (c) 2017, 2022, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -34,11 +34,12 @@ package com.oracle.javafx.scenebuilder.kit.fxom;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import java.io.IOException;
 import java.net.URL;
-import javafx.application.Application;
-import javafx.stage.Stage;
-import static org.junit.Assert.assertFalse;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import com.oracle.javafx.scenebuilder.kit.JfxInitializer;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for {@link com.oracle.javafx.scenebuilder.kit.util.Deprecation#setStaticLoad(javafx.fxml.FXMLLoader, boolean) }
@@ -47,30 +48,16 @@ public class StaticLoadTest {
     
     private boolean thrown;
     
-    public static class DummyApp extends Application {
-        @Override
-        public void start(Stage primaryStage) throws Exception {
-            // noop
-        }
-    }
-
-    @BeforeClass
+    @BeforeAll
     public static void initJFX() {
-        Thread t = new Thread("JavaFX Init Thread") {
-            @Override
-            public void run() {
-                Application.launch(DummyApp.class, new String[0]);
-            }
-        };
-        t.setDaemon(true);
-        t.start();
+        JfxInitializer.initialize();
     }
     
     @Test
     public void testStaticLoadWithoutEventHandler() throws IOException {
         thrown = false;
         EditorController editorController = new EditorController();
-        final URL fxmlURL = StaticLoadTest.class.getResource("testStaticLoadWithoutEventHandler.fxml");
+        final URL fxmlURL = StaticLoadTest.class.getResource("TestStaticLoadWithoutEventHandler.fxml");
         try {
             final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
             editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);
@@ -85,7 +72,7 @@ public class StaticLoadTest {
     public void testStaticLoad() throws IOException {
         thrown = false;
         EditorController editorController = new EditorController();
-        final URL fxmlURL = StaticLoadTest.class.getResource("testStaticLoad.fxml");
+        final URL fxmlURL = StaticLoadTest.class.getResource("TestStaticLoad.fxml");
         try {
             final String fxmlText = FXOMDocument.readContentFromURL(fxmlURL);
             editorController.setFxmlTextAndLocation(fxmlText, fxmlURL, false);

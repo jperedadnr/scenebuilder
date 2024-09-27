@@ -3,9 +3,13 @@
 app/build/
 kit/build/
 
+# Maven
+target/
+
 # IDEA
 .idea/
 *.iml
+out/
 
 # Eclipse
 .classpath
