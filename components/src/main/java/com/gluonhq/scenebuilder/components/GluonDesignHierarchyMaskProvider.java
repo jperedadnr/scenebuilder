@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Gluon and/or its affiliates.
+ * Copyright (c) 2019, 2024 Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -40,9 +40,10 @@ import com.gluonhq.scenebuilder.components.hierarchy.HierarchyItemExpansionPanel
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyItem;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
-import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.ExternalDesignHierarchyMaskProvider;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.Accessory;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
 import javafx.scene.control.TreeItem;
 
 import java.util.Arrays;
@@ -89,23 +90,23 @@ public class GluonDesignHierarchyMaskProvider implements ExternalDesignHierarchy
     @Override
     public boolean isAcceptingAccessory(Object sceneGraphObject, Accessible accessory) {
         if (accessory instanceof Accessory) {
-            switch ((Accessory) accessory) {
-                case GRAPHIC:
+            switch (DefaultAccessories.byName(((Accessory) accessory).getName()).getName()) {
+                case "GRAPHIC":
                     if (sceneGraphObject instanceof ExpansionPanel.ExpandedPanel) {
                         return false;
                     }
                     break;
-                case DP_GRAPHIC:
+                case "DP_GRAPHIC":
                     if (sceneGraphObject instanceof ExpansionPanel.ExpandedPanel) {
                         return false;
                     }
                     break;
-                case EXPANDABLE_CONTENT:
+                case "EXPANDABLE_CONTENT":
                     if (!(sceneGraphObject instanceof ExpansionPanel)) {
                         return false;
                     }
                     break;
-                case EXTERNAL:
+                case "EXTERNAL":
                     switch ((AccessoryEx) accessory) {
                         case COLLAPSED_CONTENT:
                             if (!(sceneGraphObject instanceof ExpansionPanel)) {
@@ -149,7 +150,9 @@ public class GluonDesignHierarchyMaskProvider implements ExternalDesignHierarchy
             case COLLAPSED_CONTENT:
                 result = collapsedContentName;
                 break;
+            default: result = null;
             }
+            return result;
         }
 
      public Map<Accessory, FXOMObject> checkExternalAccesories() {
@@ -159,19 +162,19 @@ public class GluonDesignHierarchyMaskProvider implements ExternalDesignHierarchy
                 AccessoryEx.EXPANDED_CONTENT,
                 AccessoryEx.COLLAPSED_CONTENT
         }) {
-            if (isAcceptingAccessory(accessory)) {
-                final FXOMObject value = designHierarchyMask.getAccessory(accessory);
-                map.put(accessory, value);
-//                treeItem.getChildren().add(makeTreeItemExpansionPanel(mask, value, accessory));
-            }
+//            if (isAcceptingAccessory(accessory)) {
+//                final FXOMObject value = designHierarchyMask.getAccessory(accessory);
+//                map.put(accessory, value);
+////                treeItem.getChildren().add(makeTreeItemExpansionPanel(mask, value, accessory));
+//            }
         }
 
-        // Gluon ExpandedPanel
-        if (mask.isAcceptingAccessory(Accessory.EX_CONTENT)) {
-            final FXOMObject value = designHierarchyMask.getAccessory(AccessoryEx.EX_CONTENT);
-            map.put(AccessoryEx.EX_CONTENT, value);
-//            treeItem.getChildren().add(makeTreeItemExpandedPanel(mask, value));
-        }
+//        // Gluon ExpandedPanel
+//        if (mask.isAcceptingAccessory(Accessory.EX_CONTENT)) {
+//            final FXOMObject value = designHierarchyMask.getAccessory(AccessoryEx.EX_CONTENT);
+//            map.put(AccessoryEx.EX_CONTENT, value);
+////            treeItem.getChildren().add(makeTreeItemExpandedPanel(mask, value));
+//        }
         return map;
     }
 
@@ -179,7 +182,7 @@ public class GluonDesignHierarchyMaskProvider implements ExternalDesignHierarchy
     private TreeItem<HierarchyItem> makeTreeItemExpansionPanel(
             final DesignHierarchyMask owner,
             final FXOMObject fxomObject,
-            final DesignHierarchyMask.Accessory accessory) {
+            final Accessory accessory) {
         final HierarchyItemExpansionPanel item = new HierarchyItemExpansionPanel(owner, fxomObject, accessory);
         final TreeItem<HierarchyItem> treeItem = new TreeItem<>(item);
         // Set back the TreeItem expanded property if any
@@ -189,7 +192,7 @@ public class GluonDesignHierarchyMaskProvider implements ExternalDesignHierarchy
         }
         // Mask may be null for empty place holder
         if (item.getMask() != null) {
-            updateTreeItem(treeItem);
+//            updateTreeItem(treeItem);
         }
         return treeItem;
     }
@@ -204,7 +207,7 @@ public class GluonDesignHierarchyMaskProvider implements ExternalDesignHierarchy
         }
         // Mask may be null for empty place holder
         if (item.getMask() != null) {
-            updateTreeItem(treeItem);
+//            updateTreeItem(treeItem);
         }
         return treeItem;
     }

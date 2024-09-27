@@ -12,6 +12,7 @@
 
     <modules>
         <module>kit</module>
+        <module>components</module>
         <module>app</module>
     </modules>
 

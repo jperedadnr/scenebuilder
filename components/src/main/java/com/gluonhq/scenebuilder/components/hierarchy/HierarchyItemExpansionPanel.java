@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -29,7 +29,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.gluonhq.scenebuilder.components.hierarchy;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyItem;
@@ -37,6 +36,7 @@ import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.Accessory;
 import javafx.scene.image.Image;
 
 import java.net.URL;
@@ -45,7 +45,7 @@ import java.util.Objects;
 
 public class HierarchyItemExpansionPanel extends HierarchyItem {
 
-    private final DesignHierarchyMask.Accessory accessory;
+    private final Accessory accessory;
     // The accessory owner. Used for the equals method.
     private final DesignHierarchyMask owner;
 
@@ -59,7 +59,7 @@ public class HierarchyItemExpansionPanel extends HierarchyItem {
     public HierarchyItemExpansionPanel(
             final DesignHierarchyMask owner,
             final FXOMObject fxomObject,
-            final DesignHierarchyMask.Accessory accessory) {
+            final Accessory accessory) {
         assert owner != null;
         this.owner = owner;
         // fxomObject can be null for place holder items
@@ -120,18 +120,18 @@ public class HierarchyItemExpansionPanel extends HierarchyItem {
      *
      * @return the ExpansionPanel accessory represented by this item.
      */
-    public DesignHierarchyMask.Accessory getAccessory() {
+    public Accessory getAccessory() {
         return this.accessory;
     }
 
     @Override
     public Image getPlaceHolderImage() {
-        return ImageUtils.getNodeIcon("ExpansionPanel-" + accessory.name().toLowerCase(Locale.ROOT) + ".png");
+        return ImageUtils.getNodeIcon("ExpansionPanel-" + accessory.getName().toLowerCase(Locale.ROOT) + ".png");
     }
 
     @Override
     public String getPlaceHolderInfo() {
-        return (mask != null ? null : I18N.getString("hierarchy.placeholder.insert") + accessory.name().toUpperCase(Locale.getDefault()));
+        return (mask != null ? null : I18N.getString("hierarchy.placeholder.insert") + accessory.getName().toUpperCase(Locale.getDefault()));
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2019, Gluon and/or its affiliates.
+ * Copyright (c) 2016, 2024, Gluon and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -32,13 +32,15 @@
 
 package com.gluonhq.scenebuilder.components.hierarchy;
 
-import com.gluonhq.scenebuilder.components.GluonDesignHierarchyMaskProvider;
 import com.gluonhq.scenebuilder.components.GluonDesignHierarchyMaskProvider.AccessoryEx;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyItem;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.Accessory;
+
+import com.oracle.javafx.scenebuilder.kit.metadata.util.access.DefaultAccessories;
 import javafx.scene.image.Image;
 
 import java.net.URL;
@@ -47,7 +49,7 @@ import java.util.Objects;
 
 public class HierarchyItemExpandedPanel extends HierarchyItem {
 
-    private final DesignHierarchyMask.Accessory accessory;
+    private final Accessory accessory;
     private final AccessoryEx accessoryEx = AccessoryEx.EX_CONTENT;
     // The accessory owner. Used for the equals method.
     private final DesignHierarchyMask owner;
@@ -65,7 +67,7 @@ public class HierarchyItemExpandedPanel extends HierarchyItem {
         this.owner = owner;
         // fxomObject can be null for place holder items
         this.mask = fxomObject == null ? null : new DesignHierarchyMask(fxomObject);
-        this.accessory = DesignHierarchyMask.Accessory.EXTERNAL;
+        this.accessory = DefaultAccessories.byName("EXTERNAL");
     }
 
     @Override
@@ -121,7 +123,7 @@ public class HierarchyItemExpandedPanel extends HierarchyItem {
      *
      * @return the ExpandedPanel accessory represented by this item.
      */
-    public DesignHierarchyMask.Accessory getAccessory() {
+    public Accessory getAccessory() {
         return this.accessory;
     }
 
