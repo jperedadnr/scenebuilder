@@ -30,6 +30,7 @@
         <project.github.repository>gluonhq/scenebuilder</project.github.repository>
         <repository.url>github.com:${project.github.repository}</repository.url>
         <jreleaser.files.active>RELEASE</jreleaser.files.active>
+        <altDeploymentRepository>local::file:./target/staging-deploy</altDeploymentRepository>
         <main.class.name/>
     </properties>
 
@@ -146,6 +147,13 @@
                         <argLine>--add-opens=javafx.fxml/javafx.fxml=com.gluonhq.scenebuilder.kit</argLine>
                     </configuration>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.1.3</version>
+                </plugin>
+
             </plugins>
         </pluginManagement>
         <plugins>
