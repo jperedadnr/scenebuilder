@@ -10,6 +10,13 @@
         <version>24.0.0-SNAPSHOT</version>
     </parent>
 
+    <repositories>
+        <repository>
+            <id>gluon-nexus</id>
+            <url>https://nexus.gluonhq.com/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+
     <properties>
         <charm.glisten.version>6.2.3</charm.glisten.version>
         <gluon.attach.version>4.0.21</gluon.attach.version>
