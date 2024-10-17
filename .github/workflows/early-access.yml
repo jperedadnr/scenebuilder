@@ -114,7 +114,8 @@ jobs:
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
 
   early-access:
-    needs: [precheck, linux-bundles, windows-bundles, mac-bundles, mac_aarch64-bundles, kit-bundles]
+#    needs: [precheck, linux-bundles, windows-bundles, mac-bundles, mac_aarch64-bundles, kit-bundles]
+    needs: [precheck, kit-bundles]
     if: endsWith(${{ needs.precheck.outputs.PROJECT_VERSION }}, '-SNAPSHOT')
     runs-on: ubuntu-20.04
     steps:
@@ -124,6 +125,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download all build artifacts
+        if: false
         uses: actions/download-artifact@v4
         with:
           path: artifacts
@@ -144,16 +146,30 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Release with JReleaser
+        if: false
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts jreleaser:release
 
       - name: JReleaser output
-        if: always()
+        if: false
+#        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: jreleaser-logs
           path: |
             target/jreleaser/trace.log
             target/jreleaser/output.properties
+
+      - name: Publish Kit with JReleaser
+        env:
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_NEXUS2_USERNAME: ${{ secrets.JRELEASER_NEXUS2_USERNAME }}
+          JRELEASER_NEXUS2_TOKEN: ${{ secrets.JRELEASER_NEXUS2_TOKEN }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
+        run: |
+          mvn deploy -fkit
+          mvn -B -ntp -pl :parent jreleaser:deploy
