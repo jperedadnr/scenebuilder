@@ -50,6 +50,7 @@ jobs:
 
   linux-bundles:
     needs: [precheck]
+    if: false
     uses: ./.github/workflows/bundles-linux.yml
     with:
       javafx-version: ${{ needs.precheck.outputs.JAVAFX_VERSION }}
@@ -60,6 +61,7 @@ jobs:
 
   windows-bundles:
     needs: [precheck]
+    if: false
     uses: ./.github/workflows/bundles-windows.yml
     secrets:
       WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
@@ -74,6 +76,7 @@ jobs:
 
   mac-bundles:
     needs: [precheck]
+    if: false
     uses: ./.github/workflows/bundles-mac.yml
     secrets:
       CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
@@ -91,6 +94,7 @@ jobs:
 
   mac_aarch64-bundles:
     needs: [precheck]
+    if: false
     uses: ./.github/workflows/bundles-mac_aarch64.yml
     secrets:
       CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
@@ -162,6 +166,10 @@ jobs:
             target/jreleaser/trace.log
             target/jreleaser/output.properties
 
+      - name: Deploy Kit to local staging
+        run: |
+          mvn -B -ntp deploy -fkit -Dmaven.test.skip=true
+
       - name: Publish Kit with JReleaser
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -171,5 +179,4 @@ jobs:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
         run: |
-          mvn deploy -fkit
           mvn -B -ntp -pl :parent jreleaser:deploy
