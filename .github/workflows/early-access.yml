@@ -24,12 +24,11 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: oracle-actions/setup-java@v1.4.0
+      - name: Set up Java and Apache Maven
+        uses: actions/setup-java@v4
         with:
-          website: jdk.java.net
-          release: ${{ env.JAVA_RELEASE }}
-          version: ${{ env.JAVA_VERSION }}
+          distribution: 'oracle'
+          java-version: ${{ env.JAVA_VERSION }}
           server-id: ossrh
           server-username: ${{ secrets.JRELEASER_NEXUS2_USERNAME }}
           server-password: ${{ secrets.JRELEASER_NEXUS2_TOKEN }}
