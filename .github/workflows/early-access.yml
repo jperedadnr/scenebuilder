@@ -30,6 +30,11 @@ jobs:
           website: jdk.java.net
           release: ${{ env.JAVA_RELEASE }}
           version: ${{ env.JAVA_VERSION }}
+          server-id: ossrh
+          server-username: ${{ secrets.JRELEASER_NEXUS2_USERNAME }}
+          server-password: ${{ secrets.JRELEASER_NEXUS2_TOKEN }}
+          gpg-private-key: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
+          gpg-passphrase: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
 
       - name: Cache Maven packages
         uses: actions/cache@v4
