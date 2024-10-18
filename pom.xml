@@ -349,14 +349,15 @@
                         <deploy>
                             <maven>
                                 <nexus2>
-                                    <maven-central>
+                                    <app>
                                         <active>ALWAYS</active>
                                         <url>https://s01.oss.sonatype.org/service/local</url>
+                                        <snapshotSupported>true</snapshotSupported>
                                         <snapshotUrl>https://s01.oss.sonatype.org/content/repositories/snapshots</snapshotUrl>
                                         <closeRepository>true</closeRepository>
                                         <releaseRepository>false</releaseRepository>
                                         <stagingRepositories>target/staging-deploy</stagingRepositories>
-                                    </maven-central>
+                                    </app>
                                 </nexus2>
                             </maven>
                         </deploy>
