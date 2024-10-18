@@ -140,11 +140,6 @@ jobs:
         with:
           distribution: 'oracle'
           java-version: ${{ env.JAVA_VERSION }}
-          server-id: ossrh
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_CENTRAL_TOKEN
-          # gpg-private-key: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
-          # gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Cache Maven packages
         uses: actions/cache@v4
@@ -161,13 +156,11 @@ jobs:
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts jreleaser:release
 
       - name: Deploy parent pom and Kit to local staging
-        if: false
         run: |
           mvn -B -ntp deploy -pl :parent -Dmaven.test.skip=true
           mvn -B -ntp deploy -fkit -Dmaven.test.skip=true
 
       - name: Publish Kit with JReleaser
-        if: false
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_NEXUS2_USERNAME: ${{ secrets.JRELEASER_NEXUS2_USERNAME }}
@@ -175,27 +168,14 @@ jobs:
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
-          MAVEN_USERNAME: ${{ secrets.JRELEASER_NEXUS2_USERNAME }}
-          MAVEN_CENTRAL_TOKEN: ${{ secrets.JRELEASER_NEXUS2_TOKEN }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
         run: |
           mvn -B -ntp -pl :parent jreleaser:deploy
 
       - name: JReleaser output
-        # if: always()
-        if: false
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: jreleaser-logs
           path: |
             target/jreleaser/trace.log
             target/jreleaser/output.properties
-
-      - name: Publish Snapshots
-        run: |
-          mvn -B -ntp deploy -pl :parent -Dmaven.test.skip=true
-          mvn -B -ntp deploy -fkit -Dmaven.test.skip=true
-        shell: bash
-        env:
-          MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          MAVEN_CENTRAL_TOKEN: ${{ secrets.SONATYPE_PASSWORD }}
