@@ -145,6 +145,11 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      - name: Deploy parent pom and Kit to local staging
+        run: |
+          mvn -B -ntp deploy -pl :parent -Dmaven.test.skip=true
+          mvn -B -ntp deploy -fkit -Dmaven.test.skip=true
+          
       - name: Release with JReleaser
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -156,12 +161,8 @@ jobs:
         run: |
           mvn -B -ntp -pl :parent -DartifactsDir=artifacts jreleaser:release
 
-      - name: Deploy parent pom and Kit to local staging
-        run: |
-          mvn -B -ntp deploy -pl :parent -Dmaven.test.skip=true
-          mvn -B -ntp deploy -fkit -Dmaven.test.skip=true
-
       - name: Publish Kit with JReleaser
+        if: false
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_NEXUS2_USERNAME: ${{ secrets.JRELEASER_NEXUS2_USERNAME }}
