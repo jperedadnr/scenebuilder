@@ -74,6 +74,7 @@ jobs:
 
   mac-bundles:
     needs: [precheck]
+    if: false
     uses: ./.github/workflows/bundles-mac.yml
     secrets:
       CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
@@ -91,6 +92,7 @@ jobs:
 
   mac_aarch64-bundles:
     needs: [precheck]
+    if: false
     uses: ./.github/workflows/bundles-mac_aarch64.yml
     secrets:
       CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
@@ -114,7 +116,7 @@ jobs:
       project-version: ${{ needs.precheck.outputs.PROJECT_VERSION }}
 
   early-access:
-    needs: [precheck, linux-bundles, windows-bundles, mac-bundles, mac_aarch64-bundles, kit-bundles]
+    needs: [precheck, linux-bundles, windows-bundles, kit-bundles]
     if: endsWith(${{ needs.precheck.outputs.PROJECT_VERSION }}, '-SNAPSHOT')
     runs-on: ubuntu-20.04
     steps:
